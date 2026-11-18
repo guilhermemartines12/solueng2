@@ -370,10 +370,20 @@
                             Resolva questões no padrão FAPEC (A a E), veja o comentário da lei e transforme seus erros em flashcards com 1 clique.
                         </p>
                     </div>
-                    <button onclick="openQuestionModal()" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white shadow-sm shadow-sky-600/20 flex items-center gap-2 transition">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Nova Questão</span>
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="mergeDefaultFapecPackage()" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center gap-2 transition" title="Garante que todas as 20 questões padrão da FAPEC estejam no seu banco">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>🔄 Carregar Pacote FAPEC (15 Questões)</span>
+                        </button>
+                        <button onclick="openBulkImportModal()" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/20 flex items-center gap-2 transition">
+                            <i class="fa-solid fa-file-import"></i>
+                            <span>📥 Importar em Lote (JSON)</span>
+                        </button>
+                        <button onclick="openQuestionModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white shadow-sm shadow-sky-600/20 flex items-center gap-2 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>+ Nova Questão</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Controles de Filtro -->
@@ -809,6 +819,57 @@
         </div>
     </div>
 
+    <!-- ================= MODAL 4: IMPORTAR QUESTÕES EM LOTE (JSON) ================= -->
+    <div id="bulk-import-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                        <i class="fa-solid fa-file-import text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">📥 Importar Questões em Lote (JSON)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Cole abaixo a lista JSON gerada no chat para adicionar várias questões de uma só vez</p>
+                    </div>
+                </div>
+                <button onclick="closeBulkImportModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <span class="text-xs text-slate-600 dark:text-slate-300">
+                        Quer carregar imediatamente o pacote com as <strong>15 questões da FAPEC (UFMS/UFGD/SANESUL)</strong>?
+                    </span>
+                    <button type="button" onclick="fillBulkTextareaWithFapec15()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25 transition">
+                        Preencher com Pacote 15 Questões FAPEC
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">
+                        Código JSON das Questões *
+                    </label>
+                    <textarea id="bulk-json-textarea" rows="10" placeholder='[{"id": "q_2077020", "disciplina": "Legislação", "assunto": "Estrutura UFMS", "enunciado": "...", "alternativas": ["A", "B", "C", "D", "E"], "correta": 0, "comentario": "..."}]' class="w-full px-3.5 py-2.5 rounded-xl text-xs font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-emerald-500"></textarea>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Aceita tanto o formato simplificado (<code class="text-emerald-500">disciplina, assunto, enunciado, alternativas, correta (0-4), comentario</code>) quanto o formato interno completo. IDs repetidos são atualizados sem duplicar.
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                    <button type="button" onclick="closeBulkImportModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="handleBulkImportJSON()" class="px-5 py-2 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Importar Questões</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Script Principal da Aplicação -->
     <script>
         /* ==========================================================================
@@ -872,9 +933,298 @@
         };
 
         /* ==========================================================================
-           2. DADOS INICIAIS PRÉ-CADASTRADOS (QUESTÕES FAPEC + FLASHCARDS)
+           2. DADOS INICIAIS PRÉ-CADASTRADOS (20 QUESTÕES FAPEC + FLASHCARDS)
            ========================================================================== */
-        const INITIAL_QUESTIONS = [
+        const FAPEC_15_PACKAGE = [
+            {
+                id: 'q_2077020',
+                disciplina: 'Legislação',
+                assunto: 'Estrutura e Normas UFMS (FAPEC 2022 - UFMS)',
+                enunciado: '(Q2077020 | FAPEC - 2022 - UFMS - Assistente em Administração) Qual alternativa abaixo menciona uma unidade da Administração Central da UFMS?',
+                alternativas: [
+                    'Pró-Reitoria.',
+                    'Conselho Diretor.',
+                    'Faculdade.',
+                    'Conselho Universitário.',
+                    'Escola.'
+                ],
+                correta: 0,
+                comentario: 'Gabarito Comentado (Alternativa A): Pró-Reitoria é denominação típica de unidade administrativa superior vinculada à Reitoria e integrante da gestão central da universidade. Portanto, enquadra-se como unidade da Administração Central, porque exerce função executiva de direção, coordenação e gestão institucional em nível central.'
+            },
+            {
+                id: 'q_2077021',
+                disciplina: 'Legislação',
+                assunto: 'Estrutura e Normas UFMS (FAPEC 2022 - UFMS)',
+                enunciado: '(Q2077021 | FAPEC - 2022 - UFMS - Assistente em Administração) O órgão de jurisdição superior da UFMS de caráter deliberativo, normativo e consultivo em matéria administrativa, disciplinar, econômico-financeira e patrimonial denomina-se:',
+                alternativas: [
+                    'Conselho de Graduação.',
+                    'Conselho de Pesquisa e Pós-Graduação.',
+                    'Conselho Diretor.',
+                    'Assembleia Universitária.',
+                    'Reitoria.'
+                ],
+                correta: 2,
+                comentario: 'Gabarito Comentado (Alternativa C): A alternativa C está correta porque o Conselho Diretor é o órgão superior da UFMS cuja competência institucional corresponde ao conjunto de matérias indicado: administrativa, disciplinar, econômico-financeira e patrimonial, com natureza deliberativa, normativa e consultiva. O ponto decisivo não é o nome isoladamente, mas a coincidência entre a descrição funcional do enunciado e a função organizacional atribuída a esse conselho na estrutura da universidade.'
+            },
+            {
+                id: 'q_2077022',
+                disciplina: 'Legislação',
+                assunto: 'Estrutura e Normas UFMS (FAPEC 2022 - UFMS)',
+                enunciado: '(Q2077022 | FAPEC - 2022 - UFMS - Assistente em Administração) Estabelecer políticas institucionais acadêmicas e administrativas é de competência:',
+                alternativas: [
+                    'do Conselho Diretor.',
+                    'do Conselho Universitário.',
+                    'do Conselho de Graduação.',
+                    'da Reitoria.',
+                    'das Pró-Reitorias.'
+                ],
+                correta: 1,
+                comentario: 'Gabarito Comentado (Alternativa B): A alternativa B está correta porque o Conselho Universitário corresponde, no padrão organizacional universitário público mais consolidado, ao órgão máximo deliberativo da instituição. Atribuições de formulação e estabelecimento de políticas institucionais com alcance simultaneamente acadêmico e administrativo pertencem, em regra, a essa instância superior colegiada, e não a órgãos de execução, apoio ou atuação temática restrita.'
+            },
+            {
+                id: 'q_2077043',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Atos Oficiais e Administrativos (FAPEC 2022 - UFMS)',
+                enunciado: '(Q2077043 | FAPEC - 2022 - UFMS - Assistente em Administração) De acordo com o Manual de Redação de Atos Oficiais, para serem válidos, os atos oficiais devem conter os seguintes requisitos, EXCETO:',
+                alternativas: [
+                    'estrutura formal.',
+                    'objeto.',
+                    'forma.',
+                    'finalidade.',
+                    'competência.'
+                ],
+                correta: 0,
+                comentario: 'Gabarito Comentado (Alternativa A): A alternativa A está correta porque "estrutura formal" não integra o rol técnico clássico dos requisitos de validade do ato administrativo. O ponto decisivo é a distinção entre elemento jurídico do ato e aspecto de apresentação ou organização do texto/documento. Pela base, competência, finalidade, forma, motivo e objeto são os requisitos de validade; "estrutura formal" não aparece nessa enumeração técnica.'
+            },
+            {
+                id: 'q_2077044',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Atos Oficiais e Administrativos (FAPEC 2022 - UFMS)',
+                enunciado: '(Q2077044 | FAPEC - 2022 - UFMS - Assistente em Administração) Em relação aos atos oficiais, o Manual de Redação de Atos Oficiais estabelece que:',
+                alternativas: [
+                    'quanto ao alcance, os atos podem ser classificados como atos vinculados ou atos discricionários.',
+                    'quanto regramento, os atos podem ser classificados como atos internos e atos externos.',
+                    'quanto ao objeto, os atos podem ser classificados como atos discricionários e atos de império.',
+                    'quanto ao objeto, os atos podem ser classificados como atos de gestão, atos de império e atos de expediente.',
+                    'quanto ao alcance, os atos podem ser classificados como atos de expediente, atos discricionários e atos de gestão.'
+                ],
+                correta: 3,
+                comentario: 'Gabarito Comentado (Alternativa D): A alternativa D está correta porque apresenta a correspondência técnica exata entre o critério classificatório "quanto ao objeto" e suas espécies: atos de gestão, atos de império e atos de expediente. Esse é o núcleo conceitual decisivo da questão. Não há mistura com outros eixos de classificação, como o grau de liberdade da Administração.'
+            },
+            {
+                id: 'q_2077050',
+                disciplina: 'Legislação',
+                assunto: 'Lei nº 9.784/1999 - Processo Administrativo (FAPEC 2022 - UFMS)',
+                enunciado: '(Q2077050 | FAPEC - 2022 - UFMS - Assistente em Administração) Qual das alternativas abaixo elenca corretamente três princípios aplicáveis à Administração Pública, nos termos da Lei nº 9.784, de 29 de janeiro de 1999?',
+                alternativas: [
+                    'Legalidade, finalidade e supremacia do interesse privado.',
+                    'Finalidade, razoabilidade e segurança jurídica.',
+                    'Moralidade, proporcionalidade e livre concorrência.',
+                    'Ampla defesa, interesse público e inabilidade.',
+                    'Supremacia do interesse privado, finalidade e ilicitude.'
+                ],
+                correta: 1,
+                comentario: 'Gabarito Comentado (Alternativa B): O art. 2º, caput, da Lei nº 9.784/1999 dispõe que a Administração Pública obedecerá, dentre outros, aos princípios da “legalidade, finalidade, motivação, razoabilidade, proporcionalidade, moralidade, ampla defesa, contraditório, segurança jurídica, interesse público e eficiência”. A alternativa B está correta porque seus três termos — finalidade, razoabilidade e segurança jurídica — coincidem integralmente com esse rol legal.'
+            },
+            {
+                id: 'q_3369648',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Políticas Públicas e Indicadores Socioeconômicos (FAPEC 2025 - SANESUL)',
+                enunciado: '(Q3369648 | FAPEC - 2025 - SANESUL - Assistente Administrativo) O saneamento básico tem impacto direto na saúde, no desenvolvimento econômico e na qualidade de vida das pessoas. Investimentos em saneamento contribuem significativamente para melhorar o desenvolvimento humano, reduzindo desigualdades e promovendo o bem-estar. Qual das métricas a seguir é corretamente indicada para mensurar e compreender o impacto do saneamento básico na melhoria de vida das pessoas?',
+                alternativas: [
+                    'Índice de Desenvolvimento Humano (IDH).',
+                    'Taxa de crescimento populacional.',
+                    'Produto Interno Bruto (PIB).',
+                    'Taxa de urbanização.',
+                    'Nível de exportações.'
+                ],
+                correta: 0,
+                comentario: 'Gabarito Comentado (Alternativa A): O IDH é a métrica mais adequada para mensurar o impacto do saneamento básico, pois capta mudanças nas condições de vida, refletindo avanços em saúde e longevidade. A ONU e o PNUD utilizam o IDH justamente para comparar o desenvolvimento humano de diferentes países e regiões, incluindo fatores diretamente afetados pelo saneamento.'
+            },
+            {
+                id: 'q_4260180',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Teorias da Administração - Burocracia (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260180 | Fundação FAPEC - 2025 - UFGD - Administrador) Analise as alternativas a seguir e assinale aquela que representa um dos enfoques da teoria burocrática da Administração:',
+                alternativas: [
+                    'Racionalidade organizacional.',
+                    'Análise intraorganizacional.',
+                    'Estilos de administração.',
+                    'Organização informal.',
+                    'Análise ambiental.'
+                ],
+                correta: 0,
+                comentario: 'Gabarito Comentado (Alternativa A): A alternativa A corresponde ao enfoque atribuído à burocracia na classificação cobrada: a racionalidade organizacional, ao lado da organização formal burocrática. O critério é reconhecer essa vinculação teórica, sem presumir que a racionalidade seja exclusiva da burocracia ou garanta eficiência em toda organização concreta.'
+            },
+            {
+                id: 'q_4260187',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Governança Pública (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260187 | Fundação FAPEC - 2025 - UFGD - Administrador) Segundo Bresser-Pereira, Governança Pública está relacionada à:',
+                alternativas: [
+                    'capacidade operacional das estruturas administrativas de um governo, apenas.',
+                    'gestão de riscos implementada no contexto da Administração Pública.',
+                    'capacidade financeira e administrativa, em sentido amplo, de um governo implementar políticas públicas.',
+                    'capacidade de implementação de projetos corporativos, visando ao atendimento de interesses privados.',
+                    'forma com que o Estado se relaciona com as diferentes estruturas de mercado, visando à obtenção de lucro.'
+                ],
+                correta: 2,
+                comentario: 'Gabarito Comentado (Alternativa C): A alternativa C preserva o conceito completo: considera tanto os recursos financeiros quanto a capacidade administrativa do governo e vincula ambos à implementação de políticas públicas. O critério é a capacidade governamental de executar políticas, e não uma atividade administrativa isolada.'
+            },
+            {
+                id: 'q_4260200',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Accountability e Controle Social (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260200 | Fundação FAPEC - 2025 - UFGD - Administrador) Analise as alternativas a seguir sobre o conceito de accountability e assinale a INCORRETA.',
+                alternativas: [
+                    'A accountability pode ser vertical, ou seja, entre representantes ou autoridades e cidadãos.',
+                    'A accountability pode ser horizontal, ou seja, entre os poderes, a exemplo do mecanismo de freios e de contrapesos.',
+                    'Accountability é a capacidade de garantir que os ocupantes de cargos públicos respondam pelo seu comportamento, justifiquem e informem suas decisões aos cidadãos e que possam ser penalizados por elas.',
+                    'Accountability tem a ver com a prestação de contas, com responsabilidade e com responsabilização, não só no sentido legal, mas também no sentido de o ocupante de um cargo público assumir responsabilidade.',
+                    'As transferências de emendas parlamentares a organizações sem fins lucrativos não estão compreendidas no conceito de accountability.'
+                ],
+                correta: 4,
+                comentario: 'Gabarito Comentado (Alternativa E): E deve ser assinalada porque cria uma exclusão indevida: nem a origem dos recursos em emendas parlamentares nem a ausência de finalidade lucrativa da destinatária afastam a prestação de contas e a responsabilização pela aplicação desses valores. O critério é a utilização ou gestão de recursos públicos, não a natureza lucrativa da entidade.'
+            },
+            {
+                id: 'q_4260201',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Gestão por Resultados e BSC (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260201 | Fundação FAPEC - 2025 - UFGD - Administrador) A Nova Gestão Pública é orientada para a gestão de resultados. Para isso, pode utilizar diferentes instrumentos e metodologias para o diagnóstico, a implementação e avaliação de programas e projetos. Um exemplo desses instrumentos é caracterizado pela utilização de quatro perspectivas: financeira, cliente, processos internos e aprendizagem e crescimento. Trata-se do(a):',
+                alternativas: [
+                    'Gestão de Projetos.',
+                    'BPMN.',
+                    'PMBOK.',
+                    'Balanced Scorecard.',
+                    'Project Model Canvas.'
+                ],
+                correta: 3,
+                comentario: 'Gabarito Comentado (Alternativa D): O Balanced Scorecard organiza o desempenho estratégico em quatro perspectivas: financeira, clientes, processos internos e aprendizagem e crescimento. A alternativa D corresponde, portanto, à estrutura conceitual específica descrita, e não apenas a um instrumento genericamente relacionado à gestão por resultados.'
+            },
+            {
+                id: 'q_4260202',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Avaliação e Indicadores de Desempenho (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260202 | Fundação FAPEC - 2025 - UFGD - Administrador) Analise as alternativas a seguir sobre avaliação e indicadores na Administração Pública e assinale a INCORRETA.',
+                alternativas: [
+                    'Indicadores de insumo estão relacionados às pessoas e aos recursos materiais e financeiros utilizados. São indicadores úteis para dimensionar os recursos necessários para a produção (quais e quantos), mas não são capazes de indicar o cumprimento de objetivos finais.',
+                    'Indicadores semânticos utilizam os recursos de inteligência artificial para monitorar e controlar as diferentes unidades organizacionais quanto aos custos e à qualidade de serviços prestados.',
+                    'Indicadores de processo quantificam o desempenho de atividades relacionadas à forma de produção de bens e de serviços. Medem a eficiência de determinado processo de trabalho, ou seja, o quanto se consegue produzir com os meios disponibilizados e o dispêndio mínimo de recursos e esforços.',
+                    'Indicadores de produto demonstram quantitativamente os bens e os serviços produzidos como resultado da combinação de um conjunto de insumos, mediante determinado processo. Apontam a eficácia, ou seja, a capacidade de alcançar as metas e os objetivos planejados.',
+                    'Indicadores de impacto estão relacionados à capacidade de cumprir os objetivos almejados, entregando os produtos com os meios disponibilizados e com o dispêndio mínimo de recursos e esforços. Relacionam-se à efetividade.'
+                ],
+                correta: 1,
+                comentario: 'Gabarito Comentado (Alternativa B): B deve ser assinalada porque apresenta o uso de inteligência artificial como fundamento de uma categoria de indicadores, embora esse não seja o critério classificatório do referencial consultado. O problema não é a possibilidade de empregar inteligência artificial no monitoramento, mas atribuir a ela uma definição de indicador sem respaldo nessa classificação.'
+            },
+            {
+                id: 'q_4260861',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Comunicação Organizacional (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260861 | Fundação FAPEC - 2025 - UFGD - Assistente em Administração) Sobre comunicação organizacional, é correto afirmar que:',
+                alternativas: [
+                    'o processo de comunicação está envolvido apenas nos processos administrativos relativos à direção.',
+                    'para uma comunicação organizacional eficaz, é importante saber escolher o canal correto para o tipo de mensagem e de público.',
+                    'para a comunicação ocorrer de forma eficaz, são necessárias habilidades codificadoras e decodificadoras. Como exemplo de habilidades codificadoras temos a leitura e a audição.',
+                    'o processo de comunicação é um “processo de mão dupla”, pois requer o envio da mensagem pelo receptor por meio do transmissor ao destinatário.',
+                    'numa divulgação de curso de informática por meio da intranet e de cartazes, a diretora de capacitação anunciou o evento pela organização, mas nenhum funcionário entrou em contato para obter mais informações ou dar ciência de que havia sido informado sobre a capacitação. Mesmo ante a ausência de manifestação, pode-se considerar que a comunicação, nesse caso, está formalmente completa.'
+                ],
+                correta: 1,
+                comentario: 'Gabarito Comentado (Alternativa B): B trata a escolha do canal como um fator importante para a eficácia, e não como garantia suficiente. O critério é contextual: o meio utilizado precisa ser compatível tanto com o conteúdo transmitido quanto com o público a que se destina.'
+            },
+            {
+                id: 'q_4260862',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Comunicação Organizacional e Barreiras (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4260862 | Fundação FAPEC - 2025 - UFGD - Assistente em Administração) Assinale a alternativa correta.',
+                alternativas: [
+                    'Quando um funcionário não quer dar uma má notícia ao seu superior ou só quer dizer o que ele quer ouvir, temos aí um exemplo de barreira da comunicação organizacional chamada filtragem.',
+                    'O processo de comunicação organizacional usa as chamadas redes de comunicação para alcançar seus objetivos. As redes podem ser flexíveis e inflexíveis, contínuas ou em dissonância.',
+                    'Barulhos ou interrupções não são considerados obstáculos à comunicação organizacional.',
+                    'Problemas como timidez, dificuldade na fala e fobias levam as pessoas a reduzir ao máximo a sua interação com outras pessoas. Contudo, esses problemas não são considerados como barreiras do processo de comunicação organizacional.',
+                    'Na rede de comunicação do tipo todos os canais, a comunicação corre nos dois sentidos dos vários níveis hierárquicos, sem que exista uma comunicação horizontal. É uma rede centralizada.'
+                ],
+                correta: 0,
+                comentario: 'Gabarito Comentado (Alternativa A): Na alternativa A, o funcionário controla o conteúdo transmitido em função da reação esperada do superior. O problema não está no canal de comunicação, mas na atuação do emissor, que restringe ou modifica a informação para evitar conteúdo desfavorável e agradar ao destinatário — critério que caracteriza a filtragem.'
+            },
+            {
+                id: 'q_4261224',
+                disciplina: 'Conhecimentos Específicos',
+                assunto: 'Ciclo de Políticas Públicas (FAPEC 2025 - UFGD)',
+                enunciado: '(Q4261224 | Fundação FAPEC - 2025 - UFGD - Técnico de Laboratório) A implementação de programas esportivos no contexto universitário figura como política pública importante para o desenvolvimento da comunidade universitária, pois possibilita socialização, integração, esforço físico, troca de saberes e promoção da saúde. Para conhecer o cumprimento de metas, os pontos positivos, os pontos negativos e as falhas existentes, bem como promover as adequações necessárias ao longo do desenvolvimento do programa, é necessário que haja um acompanhamento contínuo. No âmbito da teoria dos ciclos das políticas públicas, esse acompanhamento consiste no(a):',
+                alternativas: [
+                    'formação de agenda.',
+                    'monitoramento.',
+                    'implementação.',
+                    'avaliação.',
+                    'formulação.'
+                ],
+                correta: 1,
+                comentario: 'Gabarito Comentado (Alternativa B): A alternativa B corresponde à função de produzir informações sobre o andamento do programa, verificando o cumprimento de objetivos e metas e subsidiando ajustes. Conforme o conceito apresentado por Casa Civil e Ipea, esse exame abrange a execução e seus resultados, permitindo reconhecer problemas enquanto o programa se desenvolve.'
+            }
+        ];
+
+        // Conversor universal que aceita tanto o esquema simplificado (disciplina, assunto, enunciado, alternativas, correta 0-4, comentario)
+        // quanto o esquema interno da aplicação (subject, topic, statement, options A-E, correct 'A'-'E', explanation)
+        function normalizeQuestionObject(raw, indexFallback = 0) {
+            if (!raw || typeof raw !== 'object') return null;
+
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+
+            // Mapear disciplina para a chave interna (especificos, legislacao, raciocinio, portugues, ingles)
+            let subjectKey = raw.subject || raw.disciplina || 'especificos';
+            const normSubj = String(subjectKey).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (normSubj.includes('legisla')) subjectKey = 'legislacao';
+            else if (normSubj.includes('raciocinio') || normSubj.includes('logic')) subjectKey = 'raciocinio';
+            else if (normSubj.includes('portugues')) subjectKey = 'portugues';
+            else if (normSubj.includes('ingles')) subjectKey = 'ingles';
+            else if (!SUBJECTS[subjectKey]) subjectKey = 'especificos';
+
+            // Mapear alternativas (Array de 5 itens ou Objeto A..E)
+            let optionsObj = { A: '', B: '', C: '', D: '', E: '' };
+            if (Array.isArray(raw.alternativas)) {
+                letters.forEach((L, idx) => {
+                    optionsObj[L] = String(raw.alternativas[idx] || '').trim();
+                });
+            } else if (Array.isArray(raw.options)) {
+                letters.forEach((L, idx) => {
+                    optionsObj[L] = String(raw.options[idx] || '').trim();
+                });
+            } else if (raw.options && typeof raw.options === 'object') {
+                letters.forEach(L => {
+                    optionsObj[L] = String(raw.options[L] || '').trim();
+                });
+            }
+
+            // Mapear alternativa correta (0-4 ou 'A'-'E')
+            let correctLetter = 'A';
+            const rawCorrect = raw.correct !== undefined ? raw.correct : raw.correta;
+            if (typeof rawCorrect === 'number' && rawCorrect >= 0 && rawCorrect <= 4) {
+                correctLetter = letters[rawCorrect];
+            } else if (typeof rawCorrect === 'string') {
+                const trimmed = rawCorrect.trim().toUpperCase();
+                if (letters.includes(trimmed)) {
+                    correctLetter = trimmed;
+                } else {
+                    const num = parseInt(trimmed, 10);
+                    if (!isNaN(num) && num >= 0 && num <= 4) correctLetter = letters[num];
+                }
+            }
+
+            return {
+                id: String(raw.id || `q_imp_${Date.now()}_${indexFallback}`),
+                subject: subjectKey,
+                topic: String(raw.topic || raw.assunto || 'Administração Pública - FAPEC').trim(),
+                statement: String(raw.statement || raw.enunciado || '').trim(),
+                options: optionsObj,
+                correct: correctLetter,
+                explanation: String(raw.explanation || raw.comentario || 'Sem comentário cadastrado.').trim(),
+                status: raw.status || 'unanswered',
+                selectedOption: raw.selectedOption || null,
+                attempts: raw.attempts || 0
+            };
+        }
+
+        const BASE_5_QUESTIONS = [
             {
                 id: 'q1',
                 subject: 'especificos',
@@ -966,6 +1316,13 @@
                 attempts: 0
             }
         ];
+
+        // Total de 20 questões padrão da FAPEC (as 15 reais recém-adicionadas + 5 de base)
+        const DEFAULT_QUESTIONS = [
+            ...FAPEC_15_PACKAGE.map((q, idx) => normalizeQuestionObject(q, idx)),
+            ...BASE_5_QUESTIONS
+        ];
+        const INITIAL_QUESTIONS = DEFAULT_QUESTIONS;
 
         const INITIAL_FLASHCARDS = [
             {
@@ -1076,13 +1433,28 @@
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    appData.questions = parsed.questions || INITIAL_QUESTIONS;
-                    appData.flashcards = parsed.flashcards || INITIAL_FLASHCARDS;
-                    appData.cycle = parsed.cycle || INITIAL_CYCLE;
+                    appData.questions = parsed.questions || JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+                    appData.flashcards = parsed.flashcards || JSON.parse(JSON.stringify(INITIAL_FLASHCARDS));
+                    appData.cycle = parsed.cycle || JSON.parse(JSON.stringify(INITIAL_CYCLE));
                     appData.studyMinutes = parsed.studyMinutes || 0;
                     appData.updatedAt = parsed.updatedAt || Date.now();
+
+                    // Auto-merge: garante que qualquer questão nova em DEFAULT_QUESTIONS (como o pacote de 15 questões FAPEC)
+                    // cujo ID ainda não exista no LocalStorage do usuário seja mesclada automaticamente sem apagar o progresso!
+                    const existingIds = new Set(appData.questions.map(q => q.id));
+                    let addedCount = 0;
+                    DEFAULT_QUESTIONS.forEach(defQ => {
+                        if (!existingIds.has(defQ.id)) {
+                            appData.questions.push(JSON.parse(JSON.stringify(defQ)));
+                            existingIds.add(defQ.id);
+                            addedCount++;
+                        }
+                    });
+                    if (addedCount > 0) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+                    }
                 } else {
-                    appData.questions = JSON.parse(JSON.stringify(INITIAL_QUESTIONS));
+                    appData.questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
                     appData.flashcards = JSON.parse(JSON.stringify(INITIAL_FLASHCARDS));
                     appData.cycle = JSON.parse(JSON.stringify(INITIAL_CYCLE));
                     appData.studyMinutes = 0;
@@ -1424,10 +1796,15 @@
                             ${escapeHtml(q.explanation)}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <button onclick="createFlashcardFromQuestion('${q.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm flex items-center gap-2 transition">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                <span>Criar Cartão deste Erro / Tópico</span>
-                            </button>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="createFlashcardFromQuestion('${q.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm flex items-center gap-2 transition">
+                                    <i class="fa-solid fa-bolt"></i>
+                                    <span>⚡ Transformar em Cartão de Lembrete</span>
+                                </button>
+                                <button onclick="quickOneClickFlashcard('${q.id}')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition" title="Salva imediatamente na fila de cartões de hoje sem precisar abrir a janela">
+                                    + Salvar Cartão em 1-Clique
+                                </button>
+                            </div>
                             <button onclick="resetQuestionStatus('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
                                 Limpar Resposta para Refazer
                             </button>
@@ -1523,8 +1900,129 @@
             openFlashcardModal();
             document.getElementById('fc-form-subject').value = q.subject;
             document.getElementById('fc-form-topic').value = q.topic;
-            document.getElementById('fc-form-front').value = `(${q.topic}) Qual a regra para: ${q.options[q.correct]}?`;
+            document.getElementById('fc-form-front').value = `${q.statement}\n\n👉 Resposta correta: [${q.options[q.correct]}]`;
             document.getElementById('fc-form-back').value = q.explanation;
+        }
+
+        function quickOneClickFlashcard(qId) {
+            const q = appData.questions.find(item => item.id === qId);
+            if (!q) return;
+
+            const newCard = {
+                id: 'fc_q_' + q.id + '_' + Date.now(),
+                subject: q.subject,
+                topic: q.topic,
+                front: `${q.statement}\n\n👉 Conceito-chave: [${q.options[q.correct]}]`,
+                back: q.explanation,
+                dueDate: Date.now() - 1000,
+                interval: 0
+            };
+            appData.flashcards.unshift(newCard);
+            saveState();
+            showToast('⚡ Cartão criado com 1 clique e adicionado à fila de revisão de hoje!', 'success');
+        }
+
+        /* ==========================================================================
+           7.1 IMPORTAÇÃO EM LOTE (JSON) E PACOTE FAPEC 15 QUESTÕES
+           ========================================================================== */
+        function openBulkImportModal() {
+            document.getElementById('bulk-json-textarea').value = '';
+            const modal = document.getElementById('bulk-import-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBulkImportModal() {
+            const modal = document.getElementById('bulk-import-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function fillBulkTextareaWithFapec15() {
+            document.getElementById('bulk-json-textarea').value = JSON.stringify(FAPEC_15_PACKAGE, null, 2);
+            showToast('JSON das 15 questões FAPEC preenchido! Clique em "Importar Questões".', 'info');
+        }
+
+        function mergeQuestionsList(rawArray) {
+            let added = 0;
+            let updated = 0;
+
+            rawArray.forEach((rawItem, idx) => {
+                const normalized = normalizeQuestionObject(rawItem, idx);
+                if (!normalized || !normalized.statement) return;
+
+                const existingIndex = appData.questions.findIndex(q => q.id === normalized.id);
+                if (existingIndex !== -1) {
+                    // Preserva o status/resposta anterior do usuário se já respondeu, mas atualiza textos
+                    const prev = appData.questions[existingIndex];
+                    appData.questions[existingIndex] = {
+                        ...normalized,
+                        status: prev.status || normalized.status,
+                        selectedOption: prev.selectedOption || normalized.selectedOption,
+                        attempts: prev.attempts || normalized.attempts
+                    };
+                    updated++;
+                } else {
+                    appData.questions.push(normalized);
+                    added++;
+                }
+            });
+
+            return { added, updated };
+        }
+
+        function mergeDefaultFapecPackage() {
+            const { added, updated } = mergeQuestionsList(FAPEC_15_PACKAGE);
+            saveState();
+            if (added > 0) {
+                showToast(`Pacote FAPEC carregado: ${added} novas questões adicionadas (${updated} já existentes)!`, 'success');
+            } else {
+                showToast(`Todas as 15 questões do pacote FAPEC já estão no seu banco (${appData.questions.length} no total)!`, 'info');
+            }
+        }
+
+        function handleBulkImportJSON() {
+            const rawText = document.getElementById('bulk-json-textarea').value.trim();
+            if (!rawText) {
+                showToast('Cole o código JSON das questões antes de importar.', 'warning');
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(rawText);
+                const list = Array.isArray(parsed)
+                    ? parsed
+                    : (Array.isArray(parsed.questions) ? parsed.questions : [parsed]);
+
+                const { added, updated } = mergeQuestionsList(list);
+
+                // Se o JSON também trouxer flashcards em lote, importa sem duplicar IDs
+                let fcAdded = 0;
+                if (parsed && !Array.isArray(parsed) && Array.isArray(parsed.flashcards)) {
+                    const existingFcIds = new Set(appData.flashcards.map(c => c.id));
+                    parsed.flashcards.forEach(fc => {
+                        if (fc && fc.front && fc.back && !existingFcIds.has(fc.id)) {
+                            appData.flashcards.push({
+                                id: fc.id || ('fc_imp_' + Date.now() + '_' + fcAdded),
+                                subject: fc.subject || 'especificos',
+                                topic: fc.topic || 'Geral',
+                                front: fc.front,
+                                back: fc.back,
+                                dueDate: Date.now() - 1000,
+                                interval: 0
+                            });
+                            fcAdded++;
+                        }
+                    });
+                }
+
+                closeBulkImportModal();
+                saveState();
+                showToast(`Importação concluída: ${added} novas questões adicionadas e ${updated} atualizadas!`, 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Erro no formato do JSON. Verifique se copiou todos os colchetes [ ] e chaves { }.', 'error');
+            }
         }
 
         /* ==========================================================================
