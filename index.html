@@ -442,7 +442,7 @@
                         Use <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-sky-500 font-mono">[colchetes]</code> na Frente do cartão para criar lacunas ocultas clicáveis.
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <button onclick="setFlashcardMode('review')" id="btn-fc-mode-review" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2">
                         <i class="fa-solid fa-play"></i>
                         <span>Fila de Hoje (<span id="fc-due-counter">0</span>)</span>
@@ -451,9 +451,13 @@
                         <i class="fa-solid fa-table-list"></i>
                         <span>Ver Todos (<span id="fc-total-counter">0</span>)</span>
                     </button>
+                    <button onclick="openBulkFlashcardModal()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-import"></i>
+                        <span>📥 Importar Cartões em Lote (Texto ou JSON)</span>
+                    </button>
                     <button onclick="openFlashcardModal()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white transition flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i>
-                        <span>Novo Cartão</span>
+                        <span>+ Novo Cartão</span>
                     </button>
                 </div>
             </div>
@@ -864,6 +868,80 @@
                     <button type="button" onclick="handleBulkImportJSON()" class="px-5 py-2 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm flex items-center gap-2">
                         <i class="fa-solid fa-check"></i>
                         <span>Importar Questões</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL 5: IMPORTAR CARTÕES EM LOTE (TEXTO OU JSON) ================= -->
+    <div id="bulk-flashcard-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                        <i class="fa-solid fa-layer-group text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">📥 Importar Cartões em Lote (Texto ou JSON)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Cole direto o texto do chat ("Frente: ... Verso: ...") ou uma lista JSON</p>
+                    </div>
+                </div>
+                <button onclick="closeBulkFlashcardModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Atalho para carregar os 82 cartões criados no chat -->
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <span class="text-xs text-slate-600 dark:text-slate-300">
+                        Garantir pacote completo com todos os <strong>88 cartões do Edital UFMS</strong>:
+                    </span>
+                    <button type="button" onclick="mergeDefaultFlashcardsPackage()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25 transition">
+                        🔄 Carregar Todos os 88 Cartões Padrão
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Disciplina Padrão dos Cartões *</label>
+                        <select id="bulk-fc-subject" onchange="updateBulkFlashcardPreview()" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                            <option value="especificos">Conhecimentos Específicos (Peso 2)</option>
+                            <option value="legislacao">Legislação (Peso 2)</option>
+                            <option value="raciocinio">Raciocínio Lógico (Peso 2)</option>
+                            <option value="portugues">Língua Portuguesa (Peso 1)</option>
+                            <option value="ingles">Língua Inglesa (Peso 1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tópico / Assunto do Edital *</label>
+                        <input type="text" id="bulk-fc-topic" oninput="updateBulkFlashcardPreview()" value="Administração Pública - UFMS" placeholder="Ex: Modelos de Administração Pública" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-bold uppercase text-slate-400">
+                            Cole o Texto do Chat ("Frente: ... Verso: ...") ou JSON *
+                        </label>
+                        <span id="bulk-fc-detected-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                            0 cartões detectados
+                        </span>
+                    </div>
+                    <textarea id="bulk-fc-textarea" rows="9" oninput="updateBulkFlashcardPreview()" placeholder="* **Frente:** O que é gestão de documentos? **Verso:** Conjunto de procedimentos técnicos de produção, tramitação, uso, avaliação e arquivamento nas fases corrente e intermediária." class="w-full px-3.5 py-2.5 rounded-xl text-xs font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-emerald-500"></textarea>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Você pode copiar e colar a resposta inteira do chat (inclusive com asteriscos, títulos em negrito e marcações). O sistema separa automaticamente cada par de <strong>Frente</strong> e <strong>Verso</strong> e ignora cartões repetidos.
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                    <button type="button" onclick="closeBulkFlashcardModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="handleBulkFlashcardImport()" class="px-5 py-2 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Importar Cartões Detectados</span>
                     </button>
                 </div>
             </div>
@@ -1324,7 +1402,7 @@
         ];
         const INITIAL_QUESTIONS = DEFAULT_QUESTIONS;
 
-        const INITIAL_FLASHCARDS = [
+        const BASE_6_FLASHCARDS = [
             {
                 id: 'fc1',
                 subject: 'especificos',
@@ -1381,6 +1459,109 @@
             }
         ];
 
+        // 82 Cartões gerados sobre os 4 blocos do Edital UFMS (Tópico 9, Evolução da Adm. Pública, Modelos de Adm. Pública e Organização Direta/Indireta)
+        const EXTRA_82_FLASHCARDS_RAW = [
+            // Grupo 1 (25 Cartões): Tópico 9 - Informação, Documentação e Governo Digital
+            { id: 'fc_g1_01', subject: 'especificos', topic: '9. Gestão de Documentos e Arquivologia', front: 'O que é gestão de documentos?', back: 'Conjunto de procedimentos técnicos de produção, tramitação, uso, avaliação e arquivamento nas fases corrente e intermediária.' },
+            { id: 'fc_g1_02', subject: 'especificos', topic: '9. Gestão de Documentos e Arquivologia', front: 'Quais são as 3 idades do ciclo documental?', back: 'Corrente (uso frequente), intermediária (aguarda destinação) e permanente (valor histórico imprescritível).' },
+            { id: 'fc_g1_03', subject: 'especificos', topic: '9. Gestão de Documentos e Arquivologia', front: 'Cite as etapas da gestão de documentos.', back: 'Produção, classificação, tramitação, avaliação (via tabela de temporalidade), guarda e recuperação.' },
+            { id: 'fc_g1_04', subject: 'especificos', topic: '9. Gestão de Documentos e Arquivologia', front: 'O que são transferência e recolhimento?', back: 'Transferência é a passagem do arquivo corrente ao intermediário; recolhimento é a entrada definitiva no permanente.' },
+            { id: 'fc_g1_05', subject: 'especificos', topic: '9. Manual de Atos Oficiais da UFMS', front: 'Cite os 5 requisitos de validade do ato oficial (UFMS).', back: 'Competência, finalidade, forma, motivo e objeto ("estrutura formal" não é requisito de validade).' },
+            { id: 'fc_g1_06', subject: 'especificos', topic: '9. Manual de Atos Oficiais da UFMS', front: 'Quais são os tipos de atos oficiais quanto ao objeto (UFMS)?', back: 'Atos de império (coercitivos), de gestão (sem coerção) e de expediente (rotina interna).' },
+            { id: 'fc_g1_07', subject: 'especificos', topic: '9. Manual de Atos Oficiais da UFMS', front: 'Como os atos oficiais classificam-se quanto ao alcance e ao regramento?', back: 'Alcance: internos e externos; regramento: vinculados e discricionários.' },
+            { id: 'fc_g1_08', subject: 'especificos', topic: '9. Manual de Atos Oficiais da UFMS', front: 'Quais são as 3 partes da estrutura formal do ato na UFMS?', back: 'Cabeçalho (epígrafe, ementa e preâmbulo), texto/corpo (articulado) e fecho (local, data e assinatura).' },
+            { id: 'fc_g1_09', subject: 'especificos', topic: '9. Manual de Atos Oficiais da UFMS', front: 'Cite os atributos da redação e correspondência oficial.', back: 'Clareza, precisão, objetividade, concisão, coesão, impessoalidade e padronização (Padrão Ofício).' },
+            { id: 'fc_g1_10', subject: 'especificos', topic: '9. Informação, SIG e Indicadores', front: 'O que são dado, informação e conhecimento?', back: 'Dado é o registro bruto; informação é o dado com contexto e sentido; conhecimento é a informação aplicada na prática.' },
+            { id: 'fc_g1_11', subject: 'especificos', topic: '9. Informação, SIG e Indicadores', front: 'Cite os atributos da qualidade da informação.', back: 'Precisão (exatidão), completude (suficiência), tempestividade (no tempo certo), relevância e confiabilidade.' },
+            { id: 'fc_g1_12', subject: 'especificos', topic: '9. Informação, SIG e Indicadores', front: 'O que é um Sistema de Informações Gerenciais (SIG)?', back: 'Sistema que integra pessoas e tecnologias para transformar dados operacionais em relatórios de apoio à decisão.' },
+            { id: 'fc_g1_13', subject: 'especificos', topic: '9. Informação, SIG e Indicadores', front: 'Quais são os tipos de indicadores de desempenho público?', back: 'Insumo (recursos), processo (eficiência), produto (eficácia nas entregas) e impacto (efetividade social).' },
+            { id: 'fc_g1_14', subject: 'especificos', topic: '9. Informação, SIG e Indicadores', front: 'Qual a função de tabelas e gráficos na análise de dados?', back: 'Tabelas expõem dados exatos em linhas e colunas; gráficos mostram tendências, proporções e comparações visuais.' },
+            { id: 'fc_g1_15', subject: 'especificos', topic: '9. Segurança da Informação', front: 'Cite os 3 pilares da Segurança da Informação (CID).', back: 'Confidencialidade (acesso restrito a autorizados), Integridade (sem alteração indevida) e Disponibilidade (acesso contínuo).' },
+            { id: 'fc_g1_16', subject: 'especificos', topic: '9. Segurança da Informação', front: 'O que são autenticidade e irretratabilidade?', back: 'Autenticidade confirma a identidade do autor; irretratabilidade (não repúdio) impede que o autor negue o envio ou assinatura.' },
+            { id: 'fc_g1_17', subject: 'legislacao', topic: '9. Lei nº 12.527/2011 (LAI)', front: 'O que é a regra geral da Lei nº 12.527/2011 (LAI)?', back: 'A publicidade é o preceito geral e o sigilo é a exceção, via transparência ativa (espontânea) e passiva (a pedido).' },
+            { id: 'fc_g1_18', subject: 'legislacao', topic: '9. Lei nº 12.527/2011 (LAI)', front: 'Qual o prazo de resposta a pedidos na LAI?', back: 'Acesso imediato; não sendo possível, resposta em até 20 dias, prorrogáveis por mais 10 dias mediante justificativa.' },
+            { id: 'fc_g1_19', subject: 'legislacao', topic: '9. Lei nº 12.527/2011 (LAI)', front: 'Quais são os graus e prazos de sigilo na LAI?', back: 'Reservada (5 anos), Secreta (15 anos) e Ultrassecreta (25 anos); informações pessoais íntimas têm restrição de até 100 anos.' },
+            { id: 'fc_g1_20', subject: 'legislacao', topic: '9. Lei nº 13.709/2018 (LGPD)', front: 'Quais são os tipos de dados na Lei nº 13.709/2018 (LGPD)?', back: 'Dado pessoal (identifica o titular), sensível (raça, saúde, biometria, opinião política) e anonimizado (sem vínculo).' },
+            { id: 'fc_g1_21', subject: 'legislacao', topic: '9. Lei nº 13.709/2018 (LGPD)', front: 'Cite os agentes de tratamento e o DPO na LGPD.', back: 'Controlador (toma decisões), Operador (trata em nome do controlador) e Encarregado/DPO (elo com titulares e ANPD).' },
+            { id: 'fc_g1_22', subject: 'legislacao', topic: '9. Lei nº 13.709/2018 (LGPD)', front: 'Quando o Poder Público pode tratar dados na LGPD?', back: 'Para cumprir obrigação legal, executar políticas públicas previstas em lei ou contratos e exercer direitos em processos.' },
+            { id: 'fc_g1_23', subject: 'legislacao', topic: '9. Lei nº 14.129/2021 (Governo Digital)', front: 'O que é a Lei nº 14.129/2021 (Governo Digital)?', back: 'Norma que promove a eficiência pública via desburocratização, inovação, transformação digital e autosserviço ao cidadão.' },
+            { id: 'fc_g1_24', subject: 'legislacao', topic: '9. Lei nº 14.129/2021 (Governo Digital)', front: 'Cite os instrumentos da Lei do Governo Digital.', back: 'Base Nacional de Serviços Públicos, Cartas de Serviços, Plataformas de Governo Digital, interoperabilidade e CPF único.' },
+            { id: 'fc_g1_25', subject: 'legislacao', topic: '9. Lei nº 14.129/2021 (Governo Digital)', front: 'O que são Dados Abertos na Lei nº 14.129/2021?', back: 'Dados públicos digitais, estruturados em formato aberto, processáveis por máquina e disponibilizados sob licença de livre uso.' },
+
+            // Grupo 2 (20 Cartões): Evolução da Administração Pública no Brasil
+            { id: 'fc_g2_26', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'O que buscou a Reforma Administrativa da década de 1930?', back: 'Promover a racionalização burocrático-administrativa no Brasil durante o Estado Novo de Getúlio Vargas.' },
+            { id: 'fc_g2_27', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite o tripé da Reforma Administrativa de 1930.', back: 'Administração de Materiais, Administração de Pessoal e Administração Financeira.' },
+            { id: 'fc_g2_28', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'O que foi o DASP na reforma de 1930?', back: 'Órgão criado para auxiliar o Executivo na orientação, coordenação e fiscalização do serviço público e gerir o tripé da reforma.' },
+            { id: 'fc_g2_29', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite os 3 pontos marcantes da reforma do DASP.', back: 'Institucionalização da meritocracia, controle de processos e realização de concursos públicos.' },
+            { id: 'fc_g2_30', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'O que ocorreu com o DASP após a deposição de Vargas em 1945?', back: 'Tornou-se mero órgão consultivo, aumentando indicações políticas e a desorganização das contas públicas.' },
+            { id: 'fc_g2_31', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Qual foi o marco central da Reforma do Decreto-Lei 200/1967?', back: 'Maior descentralização via Administração Indireta para obter dinamismo operacional e racionalidade administrativa.' },
+            { id: 'fc_g2_32', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite os 5 princípios da administração federal no Decreto-Lei 200/1967.', back: 'Planejamento, Coordenação, Descentralização, Delegação de Competência e Controle.' },
+            { id: 'fc_g2_33', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'O que foi a SEMOR criada na década de 1970?', back: 'Secretaria responsável por integrar o tripé planejamento-orçamento-gestão e incorporar técnicas de RH e desenvolvimento organizacional.' },
+            { id: 'fc_g2_34', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Qual foi a premissa administrativa central da redemocratização e da CF/88?', back: 'O fortalecimento da administração direta em detrimento da indireta, gerando um retrocesso burocrático.' },
+            { id: 'fc_g2_35', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite os 3 pontos do retrocesso burocrático na CF/88.', back: 'Exigência de lei para estruturar órgãos, obrigatoriedade do Regime Jurídico Único e menor flexibilidade da administração indireta.' },
+            { id: 'fc_g2_36', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Quais medidas administrativas marcaram os governos Collor e Itamar Franco?', back: 'Collor reduziu a máquina estatal, o número e os salários dos servidores; Itamar buscou recompor essa remuneração.' },
+            { id: 'fc_g2_37', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'O que foi o PDRAE criado pelo MARE em 1995?', back: 'Plano de reforma para reduzir custos da máquina estatal e aumentar a eficiência, eficácia e efetividade voltadas ao cidadão.' },
+            { id: 'fc_g2_38', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Quais são as 3 dimensões da reforma proposta pelo PDRAE?', back: 'Institucional-legal (superar obstáculos legais), cultural (rejeitar o patrimonialismo) e gerencial (práticas de gestão).' },
+            { id: 'fc_g2_39', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite os 4 setores de atuação estatal definidos no PDRAE.', back: 'Núcleo estratégico, atividades exclusivas, serviços não exclusivos e produção de bens e serviços para o mercado.' },
+            { id: 'fc_g2_40', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Quais eram os 3 projetos principais de execução do PDRAE?', back: 'Avaliação Estrutural (missões e órgãos), Agências Autônomas (atividades exclusivas) e Organizações Sociais (publicização).' },
+            { id: 'fc_g2_41', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'O que é o programa de publicização previsto no PDRAE?', back: 'A transferência dos serviços não exclusivos do setor estatal para o setor não-estatal (Organizações Sociais).' },
+            { id: 'fc_g2_42', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite as principais mudanças trazidas pela EC nº 19/1998.', back: 'Princípio da eficiência, contratos de gestão, participação do usuário, fim do RJU (derrubado pelo STF) e perda de cargo por desempenho.' },
+            { id: 'fc_g2_43', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Qual era o objetivo do Plano de Gestão Pública para um País de Todos (2003-2010)?', back: 'Reduzir o déficit institucional, ampliar a governança pública e fortalecer o Estado visando inclusão social.' },
+            { id: 'fc_g2_44', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Cite os princípios do Plano de Gestão Pública do governo Lula.', back: 'Estado como solução, cidadão beneficiário, integração de políticas, participação dos servidores e pluralismo metodológico.' },
+            { id: 'fc_g2_45', subject: 'especificos', topic: 'Evolução da Administração Pública no Brasil', front: 'Como ocorreu o fortalecimento estatal no Executivo Federal entre 2003 e 2010?', back: 'Aumento de contratações, estruturação de carreiras e melhorias salariais, sobretudo nas carreiras jurídicas e de gestão.' },
+
+            // Grupo 3 (17 Cartões): Os Três Modelos de Administração Pública
+            { id: 'fc_g3_46', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'O que é Administração Pública e quais são os seus 3 modelos?', back: 'É o aparelho do Estado que executa políticas e serviços do governo, sob os modelos patrimonialista, burocrático e gerencial.' },
+            { id: 'fc_g3_47', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'O que é o modelo patrimonialista de Administração Pública?', back: 'Modelo em que os bens do soberano não se separam da propriedade pública e o Estado funciona como extensão das posses do governante.' },
+            { id: 'fc_g3_48', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'O que caracteriza a origem do modelo burocrático?', back: 'Criado por Max Weber na segunda metade do século XIX, estabelece a separação entre os bens do detentor do poder e os do Poder Público.' },
+            { id: 'fc_g3_49', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Cite as características da burocracia quanto às normas, comunicação e trabalho.', back: 'Normas com caráter legal, comunicações formalizadas e oficiais, divisão racional do trabalho e rotinas padronizadas.' },
+            { id: 'fc_g3_50', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Cite as características da burocracia quanto às pessoas e ao funcionamento.', back: 'Impessoalidade, hierarquia, meritocracia (competência técnica), especialização, profissionalização e completa previsibilidade.' },
+            { id: 'fc_g3_51', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Quais são as vantagens da burocracia para as decisões e rotinas?', back: 'Racionalidade, rapidez, estabilidade e confiabilidade nas decisões, interpretação única de normas e uniformidade de procedimentos.' },
+            { id: 'fc_g3_52', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Quais são as vantagens da burocracia para a organização e os seus membros?', back: 'Cargos bem definidos, continuidade organizacional, redução de atritos e benefícios pessoais via treinamento e meritocracia.' },
+            { id: 'fc_g3_53', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Cite as disfunções da burocracia ligadas às regras e às relações internas.', back: 'Internalização das regras, excesso de formalismo e papelório, superconformidade às rotinas e despersonalização dos relacionamentos.' },
+            { id: 'fc_g3_54', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Cite as disfunções da burocracia ligadas à decisão, mudança e público.', back: 'Resistência a mudanças, categorização na decisão, exibição de sinais de autoridade e conflitos no atendimento aos clientes.' },
+            { id: 'fc_g3_55', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Qual é o foco central da Administração Pública Gerencial (NGP)?', back: 'A entrega de resultados (sem abandonar processos racionais e profissionais), aplicando técnicas privadas adaptadas ao setor público.' },
+            { id: 'fc_g3_56', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Como a Administração Gerencial vê a sociedade?', back: 'Como um campo de conflito, cooperação e incerteza, no qual os cidadãos defendem os seus interesses e afirmam posições ideológicas.' },
+            { id: 'fc_g3_57', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Quais são os 3 submodelos que emergem da Administração Gerencial?', back: 'Modelo gerencial puro, modelo gerencial com foco no consumidor e modelo gerencial orientado ao serviço público.' },
+            { id: 'fc_g3_58', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'O que é o modelo gerencial puro?', back: 'Vertente focada na busca da eficiência sob uma lógica fiscal, utilizando como instrumentos a avaliação de desempenho e o controle do orçamento.' },
+            { id: 'fc_g3_59', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'O que caracteriza o modelo gerencial com foco no consumidor?', back: 'Destaca a flexibilidade da gestão, a qualidade dos serviços e a prioridade às demandas do cidadão, visto como cliente ou consumidor.' },
+            { id: 'fc_g3_60', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'O que prioriza o modelo gerencial orientado ao serviço público?', back: 'Conceitos de accountability, transparência, participação política, equidade e justiça, ausentes nos outros dois submodelos gerenciais.' },
+            { id: 'fc_g3_61', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Cite as propostas estruturais e decisórias da Administração Gerencial.', back: 'Processo decisório estratégico orientado a resultados, direcionamento estratégico, descentralização e flexibilidade.' },
+            { id: 'fc_g3_62', subject: 'especificos', topic: 'Modelos de Administração Pública', front: 'Cite as propostas de desempenho e controle da Administração Gerencial.', back: 'Desempenho crescente, pagamento por produtividade, competitividade interna e externa, transparência e cobrança de resultados (accountability).' },
+
+            // Grupo 4 (20 Cartões): Conceito e Organização da Administração Direta e Indireta
+            { id: 'fc_g4_63', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que significa a Administração Pública em sentido estrito (subjetivo, formal ou orgânico)?', back: 'É o conjunto de pessoas jurídicas, órgãos e agentes públicos que exercem a função administrativa (o "quem" exerce).' },
+            { id: 'fc_g4_64', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que é e para que serve a função administrativa?', back: 'É instrumento de realização direta e imediata de direitos fundamentais para executar leis, prestar serviços ou gerenciar a máquina.' },
+            { id: 'fc_g4_65', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'A função administrativa é realizada exclusivamente pelos órgãos do Poder Executivo?', back: 'Não. Órgãos do Legislativo, Judiciário, Tribunais de Contas e Ministério Público também a exercem (ex: concursos públicos).' },
+            { id: 'fc_g4_66', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'As entidades privadas prestadoras de serviços públicos (concessionárias/permissionárias) integram a Administração Pública em sentido formal?', back: 'Não. O conceito formal/subjetivo não inclui entidades privadas delegadas, focando nas pessoas jurídicas identificadas pelo direito.' },
+            { id: 'fc_g4_67', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Como definem Administração Pública Marcelo Alexandrino e Vicente Paulo em sentido formal?', back: 'Como o conjunto de órgãos, pessoas jurídicas e agentes que o ordenamento identifica como tal, sendo a atividade irrelevante.' },
+            { id: 'fc_g4_68', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que formam os órgãos integrantes dos Poderes subordinados diretamente às pessoas políticas?', back: 'A Administração direta ou centralizada (União, Estados, DF e Municípios).' },
+            { id: 'fc_g4_69', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que formam as entidades administrativas criadas pelas pessoas políticas?', back: 'A Administração indireta ou descentralizada, dotadas de personalidade jurídica própria.' },
+            { id: 'fc_g4_70', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Quais são os quatro entes que compõem a Administração indireta no Brasil?', back: 'Autarquias, fundações públicas, empresas públicas e sociedades de economia mista.' },
+            { id: 'fc_g4_71', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que estabelece o art. 37, XIX, da CF sobre a criação de autarquias e demais entidades?', back: 'Autarquias são criadas por lei específica; empresas públicas, de economia mista e fundações têm a instituição autorizada por lei.' },
+            { id: 'fc_g4_72', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Qual é a diferença de regime e criação entre autarquias, empresas públicas e sociedades de economia mista?', back: 'Autarquia é criada diretamente por lei (direito público); EP e SEM têm criação autorizada por lei e registro posterior (direito privado).' },
+            { id: 'fc_g4_73', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que é uma autarquia segundo Maria Sylvia Zanella Di Pietro?', back: 'Pessoa jurídica de direito público, criada por lei, com autoadministração, para desempenhar serviço público descentralizado (serviço personificado).' },
+            { id: 'fc_g4_74', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que é uma fundação pública segundo Maria Sylvia Zanella Di Pietro?', back: 'Fundação instituída pelo Poder Público com patrimônio público/parcial, personalidade pública ou privada, para fins sociais.' },
+            { id: 'fc_g4_75', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'O que são "fundações autárquicas" ou "fundações públicas de direito público"?', back: 'São fundações públicas que possuem personalidade de direito público, funcionando na prática como espécies de autarquias.' },
+            { id: 'fc_g4_76', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Qual a principal distinção conceitual entre autarquia e fundação pública?', back: 'A autarquia é um "serviço público personificado"; a fundação pública representa um "patrimônio personificado".' },
+            { id: 'fc_g4_77', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Qual é o regime jurídico aplicável às EP e SEM que exploram atividade econômica?', back: 'Sujeitam-se ao regime jurídico próprio das empresas privadas, inclusive quanto a obrigações civis, comerciais, trabalhistas e tributárias.' },
+            { id: 'fc_g4_78', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Qual é a primeira grande diferença estrutural entre Empresa Pública e SEM?', back: 'A EP admite apenas capital público; a SEM admite capital público e privado (com maioria votante estatal).' },
+            { id: 'fc_g4_79', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Qual é a segunda grande diferença estrutural entre Empresa Pública e SEM?', back: 'A EP pode ser constituída sob qualquer forma jurídica; a SEM exige exclusivamente a forma de sociedade anônima (S.A.).' },
+            { id: 'fc_g4_80', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Qual é a terceira diferença aplicável exclusivamente às entidades federais (EP vs. SEM)?', back: 'Empresas públicas federais têm foro na Justiça Federal; sociedades de economia mista federais têm foro na Justiça Estadual.' },
+            { id: 'fc_g4_81', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Onde são julgadas as causas trabalhistas de empregados de EPs e SEMs federais?', back: 'Na Justiça do Trabalho, pois se trata de exceção de competência por especialização.' },
+            { id: 'fc_g4_82', subject: 'legislacao', topic: 'Administração Direta e Indireta', front: 'Para que são criadas as empresas públicas e as sociedades de economia mista?', back: 'Para atuar na exploração de atividade econômica ou na prestação de serviços públicos em regime parecido com a iniciativa privada.' }
+        ];
+
+        const DEFAULT_FLASHCARDS = [
+            ...BASE_6_FLASHCARDS,
+            ...EXTRA_82_FLASHCARDS_RAW.map(c => ({
+                ...c,
+                dueDate: Date.now() - 1000,
+                interval: 0
+            }))
+        ];
+        const INITIAL_FLASHCARDS = DEFAULT_FLASHCARDS;
+
         const INITIAL_CYCLE = [
             { id: 'c1', subject: 'especificos', title: 'Bloco 01 • Lei 14.133/2021 (Licitações)', done: false },
             { id: 'c2', subject: 'legislacao', title: 'Bloco 02 • Lei 8.112/1990 (Regime Jurídico)', done: false },
@@ -1434,28 +1615,41 @@
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     appData.questions = parsed.questions || JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
-                    appData.flashcards = parsed.flashcards || JSON.parse(JSON.stringify(INITIAL_FLASHCARDS));
+                    appData.flashcards = parsed.flashcards || JSON.parse(JSON.stringify(DEFAULT_FLASHCARDS));
                     appData.cycle = parsed.cycle || JSON.parse(JSON.stringify(INITIAL_CYCLE));
                     appData.studyMinutes = parsed.studyMinutes || 0;
                     appData.updatedAt = parsed.updatedAt || Date.now();
 
-                    // Auto-merge: garante que qualquer questão nova em DEFAULT_QUESTIONS (como o pacote de 15 questões FAPEC)
-                    // cujo ID ainda não exista no LocalStorage do usuário seja mesclada automaticamente sem apagar o progresso!
-                    const existingIds = new Set(appData.questions.map(q => q.id));
+                    // Auto-merge: garante que qualquer questão nova em DEFAULT_QUESTIONS ou cartão novo em DEFAULT_FLASHCARDS
+                    // seja mesclado automaticamente no LocalStorage sem apagar respostas ou progressos anteriores!
+                    const existingQIds = new Set(appData.questions.map(q => q.id));
                     let addedCount = 0;
                     DEFAULT_QUESTIONS.forEach(defQ => {
-                        if (!existingIds.has(defQ.id)) {
+                        if (!existingQIds.has(defQ.id)) {
                             appData.questions.push(JSON.parse(JSON.stringify(defQ)));
-                            existingIds.add(defQ.id);
+                            existingQIds.add(defQ.id);
                             addedCount++;
                         }
                     });
+
+                    const existingFcIds = new Set(appData.flashcards.map(c => c.id));
+                    const existingFcFronts = new Set(appData.flashcards.map(c => String(c.front || '').trim().toLowerCase()));
+                    DEFAULT_FLASHCARDS.forEach(defFc => {
+                        const normFront = String(defFc.front || '').trim().toLowerCase();
+                        if (!existingFcIds.has(defFc.id) && !existingFcFronts.has(normFront)) {
+                            appData.flashcards.push(JSON.parse(JSON.stringify(defFc)));
+                            existingFcIds.add(defFc.id);
+                            existingFcFronts.add(normFront);
+                            addedCount++;
+                        }
+                    });
+
                     if (addedCount > 0) {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
                     }
                 } else {
                     appData.questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
-                    appData.flashcards = JSON.parse(JSON.stringify(INITIAL_FLASHCARDS));
+                    appData.flashcards = JSON.parse(JSON.stringify(DEFAULT_FLASHCARDS));
                     appData.cycle = JSON.parse(JSON.stringify(INITIAL_CYCLE));
                     appData.studyMinutes = 0;
                     saveState(false);
@@ -2296,6 +2490,232 @@
                     showToast('Cartão excluído.', 'info');
                 }
             );
+        }
+
+        /* ==========================================================================
+           8.1 IMPORTAÇÃO DE CARTÕES EM LOTE (TEXTO "FRENTE: ... VERSO: ..." OU JSON)
+           ========================================================================== */
+        function openBulkFlashcardModal() {
+            document.getElementById('bulk-fc-textarea').value = '';
+            updateBulkFlashcardPreview();
+            const modal = document.getElementById('bulk-flashcard-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBulkFlashcardModal() {
+            const modal = document.getElementById('bulk-flashcard-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function cleanMarkdownAndCitations(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/\[cite:\s*[\d,\s.]+\]/gi, '')
+                .replace(/^\s*[\*\-\d\.]+\s*/, '')
+                .replace(/^\*+|\*+$/g, '')
+                .replace(/^\s*\|\s*/, '')
+                .trim();
+        }
+
+        function parseRawFlashcardsInput(rawText, defaultSubject = 'especificos', defaultTopic = 'Administração Pública') {
+            const trimmed = (rawText || '').trim();
+            if (!trimmed) return [];
+
+            // 1. Tenta interpretar como JSON caso comece com [ ou {
+            if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    const arr = Array.isArray(parsed)
+                        ? parsed
+                        : (Array.isArray(parsed.flashcards) ? parsed.flashcards : [parsed]);
+                    const results = [];
+                    arr.forEach((item, idx) => {
+                        if (!item || typeof item !== 'object') return;
+                        const front = cleanMarkdownAndCitations(item.front || item.frente || '');
+                        const back = cleanMarkdownAndCitations(item.back || item.verso || '');
+                        if (front && back) {
+                            let subj = item.subject || item.disciplina || defaultSubject;
+                            const normS = String(subj).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            if (normS.includes('legisla')) subj = 'legislacao';
+                            else if (normS.includes('raciocinio')) subj = 'raciocinio';
+                            else if (normS.includes('portugues')) subj = 'portugues';
+                            else if (normS.includes('ingles')) subj = 'ingles';
+                            else if (!SUBJECTS[subj]) subj = defaultSubject;
+
+                            results.push({
+                                id: item.id || ('fc_bulk_' + Date.now() + '_' + idx),
+                                subject: subj,
+                                topic: String(item.topic || item.topico || item.assunto || defaultTopic).trim(),
+                                front,
+                                back
+                            });
+                        }
+                    });
+                    if (results.length > 0) return results;
+                } catch (e) {
+                    // Continua para o parser de texto se não for JSON válido
+                }
+            }
+
+            // 2. Parser inteligente de texto bruto copiado do chat ("Frente: ... Verso: ...")
+            const cards = [];
+            let currentSectionTopic = defaultTopic;
+            const lines = trimmed.split(/\r?\n/);
+            let bufferFront = null;
+            let bufferBackLines = [];
+
+            const flushBuffer = () => {
+                if (bufferFront && bufferBackLines.length > 0) {
+                    const frontClean = cleanMarkdownAndCitations(bufferFront);
+                    const backClean = cleanMarkdownAndCitations(bufferBackLines.join('\n'));
+                    if (frontClean && backClean) {
+                        cards.push({
+                            id: 'fc_txt_' + Date.now() + '_' + cards.length,
+                            subject: defaultSubject,
+                            topic: currentSectionTopic || defaultTopic,
+                            front: frontClean,
+                            back: backClean
+                        });
+                    }
+                }
+                bufferFront = null;
+                bufferBackLines = [];
+            };
+
+            lines.forEach(rawLine => {
+                const line = rawLine.trim();
+                if (!line) return;
+
+                // Caso 1: Linha contém "Frente:" e "Verso:" na mesma linha
+                const sameLineMatch = line.match(/^(?:[\*\-\d\.]+\s*)?\**Frente\s*:\**\s*(.+?)\s*(?:\|\s*)?\**Verso\s*:\**\s*(.+)$/i);
+                if (sameLineMatch) {
+                    flushBuffer();
+                    const frontClean = cleanMarkdownAndCitations(sameLineMatch[1]);
+                    const backClean = cleanMarkdownAndCitations(sameLineMatch[2]);
+                    if (frontClean && backClean) {
+                        cards.push({
+                            id: 'fc_txt_' + Date.now() + '_' + cards.length,
+                            subject: defaultSubject,
+                            topic: currentSectionTopic || defaultTopic,
+                            front: frontClean,
+                            back: backClean
+                        });
+                    }
+                    return;
+                }
+
+                // Caso 2: Linha começa com "Frente:" (e o "Verso:" está na linha seguinte)
+                const frontOnlyMatch = line.match(/^(?:[\*\-\d\.]+\s*)?\**Frente\s*:\**\s*(.+)$/i);
+                if (frontOnlyMatch) {
+                    flushBuffer();
+                    bufferFront = frontOnlyMatch[1];
+                    return;
+                }
+
+                // Caso 3: Linha começa com "Verso:"
+                const backOnlyMatch = line.match(/^(?:[\*\-\d\.]+\s*)?\**Verso\s*:\**\s*(.+)$/i);
+                if (backOnlyMatch && bufferFront) {
+                    bufferBackLines.push(backOnlyMatch[1]);
+                    return;
+                }
+
+                // Caso 4: Subtítulo em negrito no meio do texto copiado (ex: **Administração Pública Burocrática**)
+                const headingMatch = line.match(/^(?:#+\s*|\*\*)([^*#]+?)(?:\*\*)?$/);
+                if (headingMatch && !line.toLowerCase().includes('frente') && !line.toLowerCase().includes('verso')) {
+                    flushBuffer();
+                    const cleanHeading = headingMatch[1].trim();
+                    if (cleanHeading.length >= 3 && cleanHeading.length <= 75) {
+                        currentSectionTopic = defaultTopic ? `${defaultTopic} • ${cleanHeading}` : cleanHeading;
+                    }
+                    return;
+                }
+
+                // Caso 5: Continuação de verso multi-linha
+                if (bufferFront && bufferBackLines.length > 0) {
+                    bufferBackLines.push(line);
+                }
+            });
+
+            flushBuffer();
+            return cards;
+        }
+
+        function updateBulkFlashcardPreview() {
+            const rawText = document.getElementById('bulk-fc-textarea').value;
+            const subj = document.getElementById('bulk-fc-subject').value;
+            const topic = document.getElementById('bulk-fc-topic').value.trim() || 'Administração Pública';
+            const parsed = parseRawFlashcardsInput(rawText, subj, topic);
+            const badge = document.getElementById('bulk-fc-detected-badge');
+            badge.textContent = `${parsed.length} ${parsed.length === 1 ? 'cartão detectado' : 'cartões detectados'}`;
+        }
+
+        function mergeDefaultFlashcardsPackage() {
+            const existingIds = new Set(appData.flashcards.map(c => c.id));
+            const existingFronts = new Set(appData.flashcards.map(c => String(c.front || '').trim().toLowerCase()));
+            let added = 0;
+
+            DEFAULT_FLASHCARDS.forEach(defFc => {
+                const normFront = String(defFc.front || '').trim().toLowerCase();
+                if (!existingIds.has(defFc.id) && !existingFronts.has(normFront)) {
+                    appData.flashcards.push({
+                        ...JSON.parse(JSON.stringify(defFc)),
+                        dueDate: Date.now() - 1000,
+                        interval: 0
+                    });
+                    existingIds.add(defFc.id);
+                    existingFronts.add(normFront);
+                    added++;
+                }
+            });
+
+            saveState();
+            closeBulkFlashcardModal();
+            if (added > 0) {
+                showToast(`${added} novos cartões do pacote padrão UFMS foram adicionados!`, 'success');
+            } else {
+                showToast(`Todos os 88 cartões padrão já estão no seu baralho (${appData.flashcards.length} no total)!`, 'info');
+            }
+        }
+
+        function handleBulkFlashcardImport() {
+            const rawText = document.getElementById('bulk-fc-textarea').value;
+            const subj = document.getElementById('bulk-fc-subject').value;
+            const topic = document.getElementById('bulk-fc-topic').value.trim() || 'Administração Pública';
+
+            const detected = parseRawFlashcardsInput(rawText, subj, topic);
+            if (detected.length === 0) {
+                showToast('Nenhum cartão detectado. Certifique-se de colar linhas no formato "Frente: ... Verso: ..." ou JSON.', 'warning');
+                return;
+            }
+
+            const existingFronts = new Set(appData.flashcards.map(c => String(c.front || '').trim().toLowerCase()));
+            let added = 0;
+            let skipped = 0;
+
+            detected.forEach((c, idx) => {
+                const normFront = c.front.trim().toLowerCase();
+                if (existingFronts.has(normFront)) {
+                    skipped++;
+                } else {
+                    appData.flashcards.unshift({
+                        id: c.id || ('fc_imp_' + Date.now() + '_' + idx),
+                        subject: c.subject || subj,
+                        topic: c.topic || topic,
+                        front: c.front,
+                        back: c.back,
+                        dueDate: Date.now() - 1000,
+                        interval: 0
+                    });
+                    existingFronts.add(normFront);
+                    added++;
+                }
+            });
+
+            closeBulkFlashcardModal();
+            saveState();
+            showToast(`Importação concluída: ${added} novos cartões adicionados (${skipped} repetidos ignorados)!`, 'success');
         }
 
         /* ==========================================================================
