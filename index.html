@@ -37,37 +37,6 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Estilo para lacunas ocultas nos Flashcards (Cloze Deletion) */
-        .cloze-hidden {
-            background-color: rgba(14, 165, 233, 0.25);
-            color: transparent;
-            border-bottom: 2px dashed #38bdf8;
-            border-radius: 4px;
-            padding: 0 6px;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-        .cloze-hidden::after {
-            content: '[...]';
-            color: #38bdf8;
-            font-weight: 700;
-            font-size: 0.85em;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .cloze-revealed {
-            background-color: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border-bottom: 2px solid #10b981;
-            border-radius: 4px;
-            padding: 0 6px;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
         /* Scrollbar suave */
         ::-webkit-scrollbar {
             width: 8px;
@@ -170,8 +139,8 @@
             </button>
             <button onclick="switchTab('flashcards')" id="tab-btn-flashcards" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition">
                 <i class="fa-solid fa-layer-group"></i>
-                <span>Cartões (Anki)</span>
-                <span id="nav-due-badge" class="px-1.5 py-0.5 text-xs rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold">0 hoje</span>
+                <span>Cartões de Lembrete</span>
+                <span id="nav-due-badge" class="px-1.5 py-0.5 text-xs rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold">88</span>
             </button>
             <button onclick="switchTab('cycle')" id="tab-btn-cycle" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition">
                 <i class="fa-solid fa-stopwatch"></i>
@@ -245,22 +214,22 @@
                     </div>
                 </div>
 
-                <!-- KPI 3: Cartões para Hoje -->
+                <!-- KPI 3: Cartões de Lembrete -->
                 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
                     <div class="flex justify-between items-start">
                         <div>
-                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Revisão Espaçada Hoje</span>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Cartões de Lembrete</span>
                             <div class="flex items-baseline gap-2 mt-1">
-                                <span id="kpi-due-cards" class="text-3xl font-extrabold font-mono text-rose-600 dark:text-rose-400">0</span>
-                                <span id="kpi-total-cards" class="text-xs text-slate-400">de 0 cartões</span>
+                                <span id="kpi-due-cards" class="text-3xl font-extrabold font-mono text-rose-600 dark:text-rose-400">88</span>
+                                <span id="kpi-total-cards" class="text-xs text-slate-400">cartões ativos</span>
                             </div>
                         </div>
                         <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
-                            <i class="fa-solid fa-bolt text-lg"></i>
+                            <i class="fa-solid fa-layer-group text-lg"></i>
                         </div>
                     </div>
                     <button onclick="switchTab('flashcards')" class="mt-3 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1">
-                        <span>Iniciar revisão diária</span>
+                        <span>Abrir cartões (Anterior / Próximo)</span>
                         <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </button>
                 </div>
@@ -338,10 +307,10 @@
                 <div class="bg-gradient-to-br from-rose-500/10 to-orange-500/5 border border-rose-500/20 rounded-2xl p-5">
                     <div class="flex items-center gap-2.5 text-rose-600 dark:text-rose-400 font-bold text-sm mb-2">
                         <i class="fa-solid fa-clone"></i>
-                        <span>2. Cartão Orientado ao Erro</span>
+                        <span>2. Cartões Diretos e Objetivos</span>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        Errou uma questão no banco? Clique em <strong>"Criar Cartão deste Erro"</strong> e use colchetes como <code class="px-1 py-0.5 rounded bg-rose-500/20 text-rose-400">[30 dias]</code> para ocultar prazos e exceções.
+                        Navegue livremente pelos cartões com os botões <strong>Anterior</strong> e <strong>Próximo</strong> (ou setas do teclado) e marque com <strong>⭐ Para Revisar</strong> os conceitos que quiser filtrar depois.
                     </p>
                 </div>
                 <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-5">
@@ -381,79 +350,31 @@
                         </button>
                         <button onclick="openQuestionModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white shadow-sm shadow-sky-600/20 flex items-center gap-2 transition">
                             <i class="fa-solid fa-plus"></i>
-                            <span>+ Nova Questão</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Controles de Filtro -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <!-- Filtro por Disciplina -->
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Disciplina</label>
-                        <select id="filter-q-subject" onchange="renderQuestions()" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
-                            <option value="all">Todas as Disciplinas (5)</option>
-                            <option value="especificos">Conhecimentos Específicos (Peso 2)</option>
-                            <option value="legislacao">Legislação (Peso 2)</option>
-                            <option value="raciocinio">Raciocínio Lógico (Peso 2)</option>
-                            <option value="portugues">Língua Portuguesa (Peso 1)</option>
-                            <option value="ingles">Língua Inglesa (Peso 1)</option>
-                        </select>
-                    </div>
-
-                    <!-- Filtro por Status (Caderno de Erros) -->
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Caderno / Status</label>
-                        <select id="filter-q-status" onchange="renderQuestions()" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
-                            <option value="all">Todas as Questões</option>
-                            <option value="wrong">🚨 Caderno de Erros (Erradas)</option>
-                            <option value="unanswered">⏳ Não Resolvidas</option>
-                            <option value="correct">✅ Acertadas</option>
-                        </select>
-                    </div>
-
-                    <!-- Busca por Palavra-Chave -->
-                    <div>
-                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Buscar no Enunciado / Tópico</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
-                            <input type="text" id="filter-q-search" oninput="renderQuestions()" placeholder="Ex: 14.133, posse, condicional..." class="w-full pl-9 pr-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lista de Questões -->
-            <div id="questions-list" class="space-y-4">
-                <!-- Preenchido via JS -->
-            </div>
-        </section>
-
-        <!-- ================= ABA 3: FLASHCARDS (ESTILO ANKI) ================= -->
-        <section id="tab-flashcards" class="hidden space-y-6">
+        <!-- ================= ABA 3: FLASHCARDS (NAVEGAÇÃO LIVRE ANTERIOR / PRÓXIMO) ================= -->
+        <section id="tab-flashcards" class="hidden space-y-5">
             <!-- Topo dos Flashcards -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <i class="fa-solid fa-layer-group text-rose-500"></i>
-                        <span>Flashcards com Repetição Espaçada</span>
+                        <span>Cartões de Lembrete (Perguntas Diretas)</span>
                     </h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Use <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-sky-500 font-mono">[colchetes]</code> na Frente do cartão para criar lacunas ocultas clicáveis.
+                        Navegue livremente com os botões <strong>⬅️ Anterior</strong> e <strong>Próximo ➡️</strong> (ou use as setas do teclado e Espaço para virar).
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="setFlashcardMode('review')" id="btn-fc-mode-review" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2">
-                        <i class="fa-solid fa-play"></i>
-                        <span>Fila de Hoje (<span id="fc-due-counter">0</span>)</span>
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Modo Estudo (<span id="fc-due-counter">0</span>)</span>
                     </button>
                     <button onclick="setFlashcardMode('browse')" id="btn-fc-mode-browse" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-2">
                         <i class="fa-solid fa-table-list"></i>
-                        <span>Ver Todos (<span id="fc-total-counter">0</span>)</span>
+                        <span>Ver em Lista (<span id="fc-total-counter">0</span>)</span>
                     </button>
                     <button onclick="openBulkFlashcardModal()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/20 transition flex items-center gap-2">
                         <i class="fa-solid fa-file-import"></i>
-                        <span>📥 Importar Cartões em Lote (Texto ou JSON)</span>
+                        <span>📥 Importar Cartões em Lote</span>
                     </button>
                     <button onclick="openFlashcardModal()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white transition flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i>
@@ -462,12 +383,60 @@
                 </div>
             </div>
 
-            <!-- Modo 1: Arena de Revisão Ativa -->
-            <div id="fc-review-view" class="max-w-2xl mx-auto">
+            <!-- Barra de Filtros e Salto Rápido do Visualizador de Cartões -->
+            <div id="fc-viewer-toolbar" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
+                    <!-- Filtro Disciplina -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Disciplina</label>
+                        <select id="fc-study-subject" onchange="onFlashcardStudyFilterChange('subject')" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todas as Disciplinas</option>
+                            <option value="especificos">Conhecimentos Específicos</option>
+                            <option value="legislacao">Legislação</option>
+                            <option value="raciocinio">Raciocínio Lógico</option>
+                            <option value="portugues">Língua Portuguesa</option>
+                            <option value="ingles">Língua Inglesa</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro Tópico/Assunto -->
+                    <div class="lg:col-span-4">
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Tópico / Assunto</label>
+                        <select id="fc-study-topic" onchange="onFlashcardStudyFilterChange('topic')" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todos os Tópicos</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro Status -->
+                    <div class="lg:col-span-2">
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Filtro de Marcação</label>
+                        <select id="fc-study-status" onchange="onFlashcardStudyFilterChange('status')" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todos os Cartões</option>
+                            <option value="review">⭐ Para Revisar</option>
+                            <option value="mastered">✅ Dominados</option>
+                        </select>
+                    </div>
+
+                    <!-- Ir para Cartão nº + Embaralhar -->
+                    <div class="lg:col-span-3 flex items-center gap-2">
+                        <div class="flex-1">
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Ir p/ Cartão nº</label>
+                            <input type="number" id="fc-jump-input" min="1" value="1" onchange="jumpToFlashcard(this.value)" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-mono font-bold text-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                        </div>
+                        <button onclick="shuffleFlashcardsOrder()" class="mt-5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5" title="Embaralhar ordem dos cartões">
+                            <i class="fa-solid fa-shuffle text-sky-500"></i>
+                            <span>Embaralhar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modo 1: Visualizador de Estudo (Navegação Livre Anterior / Próximo) -->
+            <div id="fc-review-view" class="max-w-3xl mx-auto">
                 <!-- Preenchido dinamicamente pelo JS -->
             </div>
 
-            <!-- Modo 2: Gerenciador / Todos os Cartões -->
+            <!-- Modo 2: Gerenciador / Todos os Cartões em Lista -->
             <div id="fc-browse-view" class="hidden space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
                     <select id="filter-fc-subject" onchange="renderFlashcardBrowser()" class="px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -480,7 +449,7 @@
                     </select>
                     <div class="relative flex-1 min-w-[220px]">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
-                        <input type="text" id="filter-fc-search" oninput="renderFlashcardBrowser()" placeholder="Pesquisar frente, verso ou tópico..." class="w-full pl-9 pr-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <input type="text" id="filter-fc-search" oninput="renderFlashcardBrowser()" placeholder="Pesquisar pergunta, resposta ou tópico..." class="w-full pl-9 pr-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                     </div>
                 </div>
                 <div id="fc-browser-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -495,241 +464,8 @@
                 <!-- Coluna Esquerda: Timer Pomodoro (50/10) -->
                 <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <i class="fa-solid fa-stopwatch text-sky-500"></i>
-                                <span>Cronômetro de Bloco</span>
-                            </h2>
-                            <span id="timer-mode-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/10 text-sky-500 border border-sky-500/20">
-                                FOCO (ESTUDO)
-                            </span>
-                        </div>
-
-                        <!-- Seletor de Disciplina Ativa -->
-                        <div class="mb-5">
-                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1.5">Matéria em estudo neste bloco</label>
-                            <select id="timer-subject-select" class="w-full px-3.5 py-2.5 rounded-xl text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                                <option value="especificos">🎯 Conhecimentos Específicos (Peso 2)</option>
-                                <option value="legislacao">⚖️ Legislação UFMS / 8.112 (Peso 2)</option>
-                                <option value="raciocinio">🧠 Raciocínio Lógico (Peso 2)</option>
-                                <option value="portugues">📘 Língua Portuguesa (Peso 1)</option>
-                                <option value="ingles">🌎 Língua Inglesa (Peso 1)</option>
-                            </select>
-                        </div>
-
-                        <!-- Visor do Relógio -->
-                        <div class="my-6 py-8 rounded-2xl bg-slate-100/80 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-center relative">
-                            <div id="timer-display" class="text-6xl sm:text-7xl font-mono font-extrabold tracking-tight text-slate-900 dark:text-white">
-                                50:00
-                            </div>
-                            <p id="timer-subtext" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                                Bloco ideal: 35 min Questões FAPEC + 15 min Flashcards
-                            </p>
-                        </div>
-
-                        <!-- Botões de Controle do Timer -->
-                        <div class="flex items-center justify-center gap-3 mb-6">
-                            <button onclick="toggleTimer()" id="timer-start-btn" class="flex-1 py-3 px-5 rounded-xl font-bold text-sm bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-600/20 transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-play"></i>
-                                <span>Iniciar Bloco</span>
-                            </button>
-                            <button onclick="resetTimer()" class="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="Reiniciar Relógio">
-                                <i class="fa-solid fa-rotate-right"></i>
-                            </button>
-                            <button onclick="completeTimerSessionManually()" class="p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition" title="Concluir e Registrar Minutos Agora">
-                                <i class="fa-solid fa-check"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Presets de Tempo -->
-                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
-                        <span class="block text-[11px] font-bold uppercase text-slate-400 mb-2">Ajuste Rápido (Minutos)</span>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="setTimerPreset(50, 'focus')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
-                                50m Estudo
-                            </button>
-                            <button onclick="setTimerPreset(25, 'focus')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
-                                25m Pomodoro
-                            </button>
-                            <button onclick="setTimerPreset(10, 'break')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition">
-                                10m Pausa
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Coluna Direita: Ciclo Semanal Ponderado (70% Peso 2 / 30% Peso 1) -->
-                <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col">
-                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <i class="fa-solid fa-repeat text-emerald-500"></i>
-                                <span>Ciclo Estratégico de Estudos (Regra 70/30)</span>
-                            </h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">
-                                14 blocos semanais sugeridos: 10 blocos de Peso 2 (71%) e 4 blocos de Peso 1 (29%).
-                            </p>
-                        </div>
-                        <button onclick="resetCycleCheckboxes()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-arrows-rotate"></i>
-                            <span>Novo Giro do Ciclo</span>
-                        </button>
-                    </div>
-
-                    <!-- Barra de Progresso do Ciclo -->
-                    <div class="mb-5">
-                        <div class="flex justify-between text-xs font-semibold mb-1.5">
-                            <span class="text-slate-500 dark:text-slate-400">Progresso do Giro Atual</span>
-                            <span id="cycle-progress-text" class="text-emerald-600 dark:text-emerald-400 font-mono">0 / 14 blocos (0%)</span>
-                        </div>
-                        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div id="cycle-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Lista de Blocos do Ciclo -->
-                    <div id="cycle-blocks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 overflow-y-auto max-h-[380px] pr-1">
-                        <!-- Preenchido via JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- ================= MODAL 1: CRIAR / EDITAR QUESTÃO ================= -->
-    <div id="question-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 max-h-[92vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
-                <h3 id="question-modal-title" class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-file-circle-plus text-sky-500"></i>
-                    <span>Cadastrar Questão no Banco</span>
-                </h3>
-                <button onclick="closeQuestionModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <form id="question-form" onsubmit="saveQuestionForm(event)" class="space-y-4">
-                <input type="hidden" id="q-form-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Disciplina *</label>
-                        <select id="q-form-subject" required class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                            <option value="especificos">Conhecimentos Específicos (Peso 2)</option>
-                            <option value="legislacao">Legislação (Peso 2)</option>
-                            <option value="raciocinio">Raciocínio Lógico (Peso 2)</option>
-                            <option value="portugues">Língua Portuguesa (Peso 1)</option>
-                            <option value="ingles">Língua Inglesa (Peso 1)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tópico do Edital *</label>
-                        <input type="text" id="q-form-topic" required placeholder="Ex: Lei 14.133/2021 - Dispensa" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Enunciado da Questão *</label>
-                    <textarea id="q-form-statement" rows="3" required placeholder="Cole ou digite o enunciado da questão da FAPEC..." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold uppercase text-slate-400">Alternativas (A a E) *</label>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">A</span>
-                        <input type="text" id="q-form-opt-A" required placeholder="Texto da alternativa A" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">B</span>
-                        <input type="text" id="q-form-opt-B" required placeholder="Texto da alternativa B" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">C</span>
-                        <input type="text" id="q-form-opt-C" required placeholder="Texto da alternativa C" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">D</span>
-                        <input type="text" id="q-form-opt-D" required placeholder="Texto da alternativa D" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">E</span>
-                        <input type="text" id="q-form-opt-E" required placeholder="Texto da alternativa E" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Gabarito Correto *</label>
-                        <select id="q-form-correct" required class="w-full px-3 py-2 rounded-xl text-sm font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                            <option value="A">Alternativa A</option>
-                            <option value="B">Alternativa B</option>
-                            <option value="C">Alternativa C</option>
-                            <option value="D">Alternativa D</option>
-                            <option value="E">Alternativa E</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Comentário / Artigo da Lei (Fundamentação) *</label>
-                        <textarea id="q-form-explanation" rows="2" required placeholder="Resumo da regra ou artigo da lei que responde à questão..." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <button type="button" onclick="closeQuestionModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="px-5 py-2 rounded-xl text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white">
-                        Salvar Questão
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ================= MODAL 2: CRIAR / EDITAR FLASHCARD ================= -->
-    <div id="flashcard-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-layer-group text-rose-500"></i>
-                    <span>Criar Cartão de Lembrete (Flashcard)</span>
-                </h3>
-                <button onclick="closeFlashcardModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <form id="flashcard-form" onsubmit="saveFlashcardForm(event)" class="space-y-4">
-                <input type="hidden" id="fc-form-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Disciplina *</label>
-                        <select id="fc-form-subject" required class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                            <option value="especificos">Conhecimentos Específicos</option>
-                            <option value="legislacao">Legislação</option>
-                            <option value="raciocinio">Raciocínio Lógico</option>
-                            <option value="portugues">Língua Portuguesa</option>
-                            <option value="ingles">Língua Inglesa</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tópico *</label>
-                        <input type="text" id="fc-form-topic" required placeholder="Ex: Prazos Lei 8.112/90" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="text-xs font-bold uppercase text-slate-400">Frente (Pergunta ou Frase com Lacuna) *</label>
-                        <button type="button" onclick="wrapSelectionInCloze()" class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition">
-                            + Ocultar Seleção [...]
-                        </button>
-                    </div>
-                    <textarea id="fc-form-front" rows="3" required placeholder="Ex: Na Lei 8.112/90, o prazo para posse é de [30 dias] e para entrar em exercício é de [15 dias]." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
-                    <p class="text-[11px] text-slate-400 mt-1">
-                        Dica: Tudo que estiver entre colchetes <code class="text-sky-400">[assim]</code> ficará oculto até você clicar ou virar o cartão.
-                    </p>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Frente (Pergunta Direta e Objetiva) *</label>
+                    <textarea id="fc-form-front" rows="3" required placeholder="Ex: Qual é o prazo para o servidor empossado entrar em exercício na Lei nº 8.112/1990?" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
                 </div>
 
                 <div>
@@ -1407,8 +1143,9 @@
                 id: 'fc1',
                 subject: 'especificos',
                 topic: 'Orçamento Público (CF/88)',
-                front: 'Diferencie o papel do [PPA], da [LDO] e da [LOA] no ciclo orçamentário federal.',
-                back: '• PPA (Plano Plurianual): diretrizes, objetivos e metas de médio prazo (4 anos).\n• LDO (Lei de Diretrizes Orçamentárias): metas e prioridades para o exercício seguinte, orienta a LOA.\n• LOA (Lei Orçamentária Anual): estima receitas e fixa despesas para 1 ano (Orçamentos Fiscal, da Seguridade e de Investimento).',
+                front: 'Qual a diferença entre o papel do PPA, da LDO e da LOA no ciclo orçamentário federal?',
+                back: 'PPA: planejamento estratégico de médio prazo (4 anos) com diretrizes, objetivos e metas. LDO: metas e prioridades anuais, orienta a elaboração da LOA. LOA: orçamento anual que estima receitas e fixa despesas.',
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             },
@@ -1416,17 +1153,19 @@
                 id: 'fc2',
                 subject: 'especificos',
                 topic: 'Lei nº 4.320/1964 - Despesa Pública',
-                front: 'Quais são os 3 estágios da execução da Despesa Pública na Lei 4.320/64? [Empenho], [Liquidação] e [Pagamento].',
-                back: '1. Empenho: ato que cria para o Estado obrigação de pagamento.\n2. Liquidação: verificação do direito adquirido pelo credor (confere se o bem/serviço foi entregue).\n3. Pagamento: despacho exarado determinando que a despesa seja paga.',
+                front: 'Quais são os 3 estágios da execução da despesa orçamentária segundo a Lei nº 4.320/1964?',
+                back: '1º Empenho (reserva de dotação), 2º Liquidação (verificação do direito do credor com base nos títulos e documentos comprobatórios) e 3º Pagamento (entrega do numerário).',
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             },
             {
                 id: 'fc3',
                 subject: 'especificos',
-                topic: 'Decreto nº 9.203/2017 - Governança Pública',
-                front: 'Segundo o Decreto nº 9.203/2017, quais são os 3 mecanismos para o exercício da Governança Pública? [Liderança], [Estratégia] e [Controle].',
-                back: 'Mnemônico LEC (Art. 5º):\n• Liderança (integridade, competência, responsabilidade e motivação);\n• Estratégia (alinhamento, escuta de demandas, avaliação de cenários);\n• Controle (gestão de riscos, transparência e prestação de contas).',
+                topic: 'Lei nº 14.133/2021 - Modalidades de Licitação',
+                front: 'Quais são as 5 modalidades de licitação previstas na Lei nº 14.133/2021 e quais foram extintas?',
+                back: 'Modalidades atuais: Pregão, Concorrência, Concurso, Leilão e Diálogo Competitivo. Foram extintas a Tomada de Preços e o Convite.',
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             },
@@ -1434,26 +1173,29 @@
                 id: 'fc4',
                 subject: 'legislacao',
                 topic: 'Lei nº 8.112/1990 - Prazos',
-                front: 'Na Lei 8.112/90, o prazo para POSSE é de [30 dias] e o prazo para entrar em EXERCÍCIO é de [15 dias].',
-                back: '• Não tomou posse em 30 dias -> Ato de provimento é tornado SEM EFEITO.\n• Tomou posse, mas não entrou em exercício em 15 dias -> Servidor é EXONERADO de ofício.',
+                front: 'Qual é o prazo para o servidor empossado entrar em exercício na Lei nº 8.112/1990 e o que ocorre se não entrar?',
+                back: 'Prazo improrrogável de 15 dias contados da data da posse. Caso não entre em exercício no prazo, o servidor será exonerado de ofício (não é demissão).',
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             },
             {
                 id: 'fc5',
                 subject: 'especificos',
-                topic: 'Lei nº 14.133/2021 - Dispensa por Valor',
-                front: 'Art. 75 da Lei 14.133/2021: A licitação é DISPENSÁVEL para obras/serviços de engenharia/manutenção de veículos até [R$ 100 mil] (valor base) e outros serviços e compras até [R$ 50 mil] (valor base).',
-                back: 'Atenção: A FAPEC pode cobrar tanto os valores originais do texto da lei (R$ 100.000,00 no inciso I e R$ 50.000,00 no inciso II) quanto mencionar que são atualizados anualmente por decreto a cada 1º de janeiro. Para autarquias/fundações qualificadas como Agências Executivas, o limite é o DOBRO.',
+                topic: 'Gestão de Materiais - Curva ABC',
+                front: 'Na Curva ABC (Classificação de Pareto) de materiais, o que representam os itens das classes A, B e C?',
+                back: 'Classe A: poucos itens (~20% da quantidade) de altíssimo valor (~80% do custo). Classe B: valor e quantidade intermediários (~30% dos itens e ~15% do valor). Classe C: muitos itens (~50% da quantidade) de baixo impacto financeiro (~5% do valor).',
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             },
             {
                 id: 'fc6',
                 subject: 'raciocinio',
-                topic: 'Lógica - Negação da Condicional',
-                front: 'Como fazer a NEGAÇÃO da proposição condicional "Se P, então Q" (P -> Q)? Regra do [MANÉ: P e ~Q].',
-                back: 'MANÉ = MAntém a primeira E NEga a segunda (trocando o "Se... então" pelo conectivo "E").\nExemplo: Negação de "Se estudo, passo" = "Estudo E não passo".',
+                topic: 'Lógica - Negação e Equivalência da Condicional',
+                front: 'Como fazer a negação lógica da condicional Se P, então Q (P -> Q) e qual a sua equivalente?',
+                back: 'Negação (MANÉ): Mantém a primeira E Nega a segunda (P ^ ~Q). Equivalências: Contrapositiva (~Q -> ~P) ou Disjunção (~P v Q).',
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             }
@@ -1556,11 +1298,66 @@
             ...BASE_6_FLASHCARDS,
             ...EXTRA_82_FLASHCARDS_RAW.map(c => ({
                 ...c,
+                status: 'normal',
                 dueDate: Date.now() - 1000,
                 interval: 0
             }))
         ];
         const INITIAL_FLASHCARDS = DEFAULT_FLASHCARDS;
+
+        // Limpa automaticamente colchetes [texto] de cartões antigos e atualiza fc1..fc6 para perguntas diretas limpas
+        function sanitizeAndMigrateFlashcards(cardsArray) {
+            if (!Array.isArray(cardsArray)) return JSON.parse(JSON.stringify(DEFAULT_FLASHCARDS));
+
+            const cleanBaseMap = {};
+            BASE_6_FLASHCARDS.forEach(b => {
+                cleanBaseMap[b.id] = b;
+            });
+
+            let changed = false;
+            const migrated = cardsArray.map(card => {
+                if (!card || typeof card !== 'object') return null;
+
+                // Substitui fc1 a fc6 pelas versões limpas sem lacunas [...]
+                if (cleanBaseMap[card.id]) {
+                    const cleanVersion = cleanBaseMap[card.id];
+                    if (
+                        card.front !== cleanVersion.front ||
+                        card.back !== cleanVersion.back ||
+                        card.topic !== cleanVersion.topic
+                    ) {
+                        changed = true;
+                    }
+                    return {
+                        ...card,
+                        subject: cleanVersion.subject,
+                        topic: cleanVersion.topic,
+                        front: cleanVersion.front,
+                        back: cleanVersion.back,
+                        status: card.status || 'normal'
+                    };
+                }
+
+                // Remove colchetes [termo] de qualquer outro cartão existente para nunca exibir [...]
+                const oldFront = String(card.front || '');
+                const oldBack = String(card.back || '');
+                const newFront = oldFront.replace(/\[([^\]]+)\]/g, '$1');
+                const newBack = oldBack.replace(/\[([^\]]+)\]/g, '$1');
+
+                if (newFront !== oldFront || newBack !== oldBack || !card.status) {
+                    changed = true;
+                }
+
+                return {
+                    ...card,
+                    front: newFront,
+                    back: newBack,
+                    status: card.status || 'normal'
+                };
+            }).filter(Boolean);
+
+            return { migrated, changed };
+        }
 
         const INITIAL_CYCLE = [
             { id: 'c1', subject: 'especificos', title: 'Bloco 01 • Lei 14.133/2021 (Licitações)', done: false },
@@ -1620,10 +1417,14 @@
                     appData.studyMinutes = parsed.studyMinutes || 0;
                     appData.updatedAt = parsed.updatedAt || Date.now();
 
+                    // Migração imediata: limpa colchetes [...] e atualiza fc1..fc6 para perguntas diretas
+                    const { migrated, changed } = sanitizeAndMigrateFlashcards(appData.flashcards);
+                    appData.flashcards = migrated;
+
                     // Auto-merge: garante que qualquer questão nova em DEFAULT_QUESTIONS ou cartão novo em DEFAULT_FLASHCARDS
                     // seja mesclado automaticamente no LocalStorage sem apagar respostas ou progressos anteriores!
                     const existingQIds = new Set(appData.questions.map(q => q.id));
-                    let addedCount = 0;
+                    let addedCount = changed ? 1 : 0;
                     DEFAULT_QUESTIONS.forEach(defQ => {
                         if (!existingQIds.has(defQ.id)) {
                             appData.questions.push(JSON.parse(JSON.stringify(defQ)));
@@ -1863,15 +1664,15 @@
             if (zeroedSubjects.length > 0) {
                 zeroBanner.classList.remove('hidden');
                 zeroText.innerHTML = `Você ainda está com <strong>0 acertos</strong> registrados em: <strong>${zeroedSubjects.join(', ')}</strong>. Lembre-se: zerar qualquer prova elimina do concurso da UFMS!`;
-            } else {
-                zeroBanner.classList.add('hidden');
-            }
-
-            // Cartões para hoje
-            const now = Date.now();
-            const dueCards = appData.flashcards.filter(c => c.dueDate <= now).length;
-            document.getElementById('kpi-due-cards').textContent = dueCards;
-            document.getElementById('kpi-total-cards').textContent = `de ${appData.flashcards.length} cartões`;
+            // Cartões no banco e marcados para revisão
+            const totalCards = appData.flashcards.length;
+            const reviewMarkedCards = appData.flashcards.filter(c => c.status === 'review').length;
+            const masteredCards = appData.flashcards.filter(c => c.status === 'mastered').length;
+            document.getElementById('kpi-due-cards').textContent = totalCards;
+            document.getElementById('kpi-total-cards').textContent =
+                reviewMarkedCards > 0
+                    ? `(${reviewMarkedCards} ⭐ p/ revisar • ${masteredCards} ✅)`
+                    : `(${masteredCards} ✅ dominados)`;
 
             // Tempo de estudo
             const hours = Math.floor(appData.studyMinutes / 60);
@@ -1880,9 +1681,9 @@
 
             // Badges de navegação
             document.getElementById('nav-questions-badge').textContent = appData.questions.length;
-            document.getElementById('nav-due-badge').textContent = `${dueCards} hoje`;
-            document.getElementById('fc-due-counter').textContent = dueCards;
-            document.getElementById('fc-total-counter').textContent = appData.flashcards.length;
+            document.getElementById('nav-due-badge').textContent = `${totalCards}`;
+            document.getElementById('fc-due-counter').textContent = totalCards;
+            document.getElementById('fc-total-counter').textContent = totalCards;
         }
 
         /* ==========================================================================
@@ -2094,8 +1895,8 @@
             openFlashcardModal();
             document.getElementById('fc-form-subject').value = q.subject;
             document.getElementById('fc-form-topic').value = q.topic;
-            document.getElementById('fc-form-front').value = `${q.statement}\n\n👉 Resposta correta: [${q.options[q.correct]}]`;
-            document.getElementById('fc-form-back').value = q.explanation;
+            document.getElementById('fc-form-front').value = q.statement;
+            document.getElementById('fc-form-back').value = `Resposta correta: ${q.options[q.correct]}\n\n${q.explanation}`;
         }
 
         function quickOneClickFlashcard(qId) {
@@ -2106,14 +1907,15 @@
                 id: 'fc_q_' + q.id + '_' + Date.now(),
                 subject: q.subject,
                 topic: q.topic,
-                front: `${q.statement}\n\n👉 Conceito-chave: [${q.options[q.correct]}]`,
-                back: q.explanation,
+                front: q.statement,
+                back: `Resposta correta: ${q.options[q.correct]}\n\n${q.explanation}`,
+                status: 'review',
                 dueDate: Date.now() - 1000,
                 interval: 0
             };
             appData.flashcards.unshift(newCard);
             saveState();
-            showToast('⚡ Cartão criado com 1 clique e adicionado à fila de revisão de hoje!', 'success');
+            showToast('⚡ Cartão criado com 1 clique e marcado com ⭐ Para Revisar!', 'success');
         }
 
         /* ==========================================================================
@@ -2220,14 +2022,398 @@
         }
 
         /* ==========================================================================
-           8. FLASHCARDS COM REPETIÇÃO ESPAÇADA E SUPORTE A LACUNAS [CLOZE]
+           8. FLASHCARDS COM NAVEGAÇÃO LIVRE (ANTERIOR / PRÓXIMO) SEM LACUNAS [...]
            ========================================================================== */
-        function formatClozeText(text, revealAll = false) {
-            const safe = escapeHtml(text).replace(/\n/g, '<br>');
-            return safe.replace(/\[([^\]]+)\]/g, (match, inner) => {
-                if (revealAll) {
-                    return `<span class="cloze-revealed">${inner}</span>`;
+        function formatCleanCardText(text) {
+            const cleaned = String(text || '').replace(/\[([^\]]+)\]/g, '$1');
+            return escapeHtml(cleaned).replace(/\n/g, '<br>');
+        }
+
+        function populateStudyTopicDropdown() {
+            const subjFilter = document.getElementById('fc-study-subject')
+                ? document.getElementById('fc-study-subject').value
+                : 'all';
+            const topicSelect = document.getElementById('fc-study-topic');
+            if (!topicSelect) return;
+
+            const currentTopic = topicSelect.value || 'all';
+            const topicsSet = new Set();
+
+            appData.flashcards.forEach(c => {
+                if (subjFilter === 'all' || c.subject === subjFilter) {
+                    if (c.topic) topicsSet.add(c.topic);
                 }
+            });
+
+            const sortedTopics = Array.from(topicsSet).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            topicSelect.innerHTML = `<option value="all">Todos os Tópicos (${sortedTopics.length})</option>`;
+            sortedTopics.forEach(t => {
+                const count = appData.flashcards.filter(c =>
+                    (subjFilter === 'all' || c.subject === subjFilter) && c.topic === t
+                ).length;
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = `${t} (${count})`;
+                topicSelect.appendChild(opt);
+            });
+
+            if (sortedTopics.includes(currentTopic)) {
+                topicSelect.value = currentTopic;
+            } else {
+                topicSelect.value = 'all';
+            }
+        }
+
+        function getFilteredStudyFlashcards() {
+            const subjFilter = document.getElementById('fc-study-subject')
+                ? document.getElementById('fc-study-subject').value
+                : 'all';
+            const topicFilter = document.getElementById('fc-study-topic')
+                ? document.getElementById('fc-study-topic').value
+                : 'all';
+            const statusFilter = document.getElementById('fc-study-status')
+                ? document.getElementById('fc-study-status').value
+                : 'all';
+
+            return appData.flashcards.filter(c => {
+                if (subjFilter !== 'all' && c.subject !== subjFilter) return false;
+                if (topicFilter !== 'all' && c.topic !== topicFilter) return false;
+                if (statusFilter !== 'all' && (c.status || 'normal') !== statusFilter) return false;
+                return true;
+            });
+        }
+
+        function onFlashcardStudyFilterChange(changedSource) {
+            if (changedSource === 'subject') {
+                populateStudyTopicDropdown();
+            }
+            currentReviewCardIndex = 0;
+            isCardBackVisible = false;
+            renderFlashcardReview();
+        }
+
+        function setFlashcardMode(mode) {
+            flashcardMode = mode;
+            const revBtn = document.getElementById('btn-fc-mode-review');
+            const brwBtn = document.getElementById('btn-fc-mode-browse');
+            const revView = document.getElementById('fc-review-view');
+            const brwView = document.getElementById('fc-browse-view');
+            const toolbar = document.getElementById('fc-viewer-toolbar');
+
+            if (mode === 'review') {
+                revView.classList.remove('hidden');
+                if (toolbar) toolbar.classList.remove('hidden');
+                brwView.classList.add('hidden');
+                revBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2';
+                brwBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition flex items-center gap-2';
+                renderFlashcardReview();
+            } else {
+                revView.classList.add('hidden');
+                if (toolbar) toolbar.classList.add('hidden');
+                brwView.classList.remove('hidden');
+                brwBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2';
+                revBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition flex items-center gap-2';
+                renderFlashcardBrowser();
+            }
+        }
+
+        function renderFlashcardReview() {
+            populateStudyTopicDropdown();
+            const container = document.getElementById('fc-review-view');
+            const studyList = getFilteredStudyFlashcards();
+            const jumpInput = document.getElementById('fc-jump-input');
+
+            if (studyList.length === 0) {
+                if (jumpInput) {
+                    jumpInput.value = 0;
+                    jumpInput.max = 0;
+                }
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto text-2xl">
+                            <i class="fa-solid fa-filter-circle-xmark"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Nenhum cartão encontrado neste filtro</h3>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                            Altere os filtros de Disciplina, Tópico ou Marcação acima para exibir seus cartões de lembrete.
+                        </p>
+                        <div class="flex justify-center gap-3 pt-2">
+                            <button onclick="resetFlashcardStudyFilters()" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white transition">
+                                Limpar Filtros (Ver Todos os ${appData.flashcards.length})
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentReviewCardIndex < 0) {
+                currentReviewCardIndex = studyList.length - 1;
+            } else if (currentReviewCardIndex >= studyList.length) {
+                currentReviewCardIndex = 0;
+            }
+
+            if (jumpInput) {
+                jumpInput.max = studyList.length;
+                jumpInput.value = currentReviewCardIndex + 1;
+            }
+
+            const card = studyList[currentReviewCardIndex];
+            const subj = SUBJECTS[card.subject] || SUBJECTS.especificos;
+            const cardStatus = card.status || 'normal';
+
+            const isReview = cardStatus === 'review';
+            const isMastered = cardStatus === 'mastered';
+
+            let statusBadgeHtml = '';
+            if (isReview) {
+                statusBadgeHtml = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">⭐ Para Revisar</span>`;
+            } else if (isMastered) {
+                statusBadgeHtml = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">✅ Dominado</span>`;
+            }
+
+            container.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-lg space-y-6">
+                    <!-- Cabeçalho do Cartão -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-4">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-md border ${subj.badgeClass}">
+                                ${subj.shortName}
+                            </span>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">• ${escapeHtml(card.topic)}</span>
+                            ${statusBadgeHtml}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono font-extrabold text-slate-700 dark:text-slate-200">
+                                Cartão ${currentReviewCardIndex + 1} de ${studyList.length}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Frente do Cartão (Pergunta Direta e Completa - Sem Lacunas Azuis) -->
+                    <div onclick="toggleCardBack()" class="py-6 px-2 min-h-[130px] flex flex-col justify-center cursor-pointer rounded-2xl hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition" title="Clique para mostrar ou ocultar a resposta">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-sky-500 mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-question"></i>
+                            <span>Pergunta (Frente do Cartão):</span>
+                        </span>
+                        <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-relaxed">
+                            ${formatCleanCardText(card.front)}
+                        </div>
+                    </div>
+
+                    <!-- Botão Mostrar / Ocultar Resposta -->
+                    <div>
+                        <button onclick="toggleCardBack()" class="w-full py-3.5 rounded-2xl font-bold text-sm ${
+                            isCardBackVisible
+                                ? 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200'
+                                : 'bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-600/20'
+                        } transition flex items-center justify-center gap-2">
+                            <i class="fa-solid ${isCardBackVisible ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                            <span>${isCardBackVisible ? 'Ocultar Resposta (Espaço)' : 'Mostrar Resposta (Espaço)'}</span>
+                        </button>
+                    </div>
+
+                    <!-- Verso do Cartão (Resposta) -->
+                    ${isCardBackVisible ? `
+                        <div class="pt-4 border-t border-dashed border-slate-200 dark:border-slate-800">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-500 mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Resposta / Fundamentação (Verso):</span>
+                            </span>
+                            <div class="p-5 rounded-2xl bg-emerald-500/5 dark:bg-slate-950 border border-emerald-500/20 dark:border-slate-800 text-sm sm:text-base text-slate-800 dark:text-slate-100 leading-relaxed">
+                                ${formatCleanCardText(card.back)}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Barra Inferior de Navegação Livre: Anterior | Marcação Opcional | Próximo -->
+                    <div class="pt-5 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <!-- Botão Anterior -->
+                        <button onclick="prevFlashcard()" class="px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition flex items-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Anterior</span>
+                        </button>
+
+                        <!-- Botões Opcionais de Marcação (Não pulam de cartão!) -->
+                        <div class="flex items-center gap-2 mx-auto sm:mx-0">
+                            <button onclick="toggleFlashcardStatus('${card.id}', 'review')" class="px-3.5 py-2.5 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
+                                isReview
+                                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
+                                    : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                            }" title="Marca ou desmarca para revisar depois (sem mudar de cartão)">
+                                <i class="fa-solid fa-star"></i>
+                                <span>${isReview ? 'Marcado p/ Revisar' : 'Marcar p/ Revisar'}</span>
+                            </button>
+
+                            <button onclick="toggleFlashcardStatus('${card.id}', 'mastered')" class="px-3.5 py-2.5 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${
+                                isMastered
+                                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                                    : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                            }" title="Marca ou desmarca como dominado (sem mudar de cartão)">
+                                <i class="fa-solid fa-check"></i>
+                                <span>${isMastered ? 'Dominado' : 'Dominado'}</span>
+                            </button>
+                        </div>
+
+                        <!-- Botão Próximo -->
+                        <button onclick="nextFlashcard()" class="px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm bg-sky-600 hover:bg-sky-500 text-white transition flex items-center gap-2 shadow-md shadow-sky-600/20">
+                            <span>Próximo</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleCardBack() {
+            isCardBackVisible = !isCardBackVisible;
+            renderFlashcardReview();
+        }
+
+        function prevFlashcard() {
+            const studyList = getFilteredStudyFlashcards();
+            if (studyList.length === 0) return;
+            currentReviewCardIndex = (currentReviewCardIndex - 1 + studyList.length) % studyList.length;
+            isCardBackVisible = false;
+            renderFlashcardReview();
+        }
+
+        function nextFlashcard() {
+            const studyList = getFilteredStudyFlashcards();
+            if (studyList.length === 0) return;
+            currentReviewCardIndex = (currentReviewCardIndex + 1) % studyList.length;
+            isCardBackVisible = false;
+            renderFlashcardReview();
+        }
+
+        function jumpToFlashcard(cardNumberInput) {
+            const studyList = getFilteredStudyFlashcards();
+            if (studyList.length === 0) return;
+            let num = parseInt(cardNumberInput, 10);
+            if (isNaN(num) || num < 1) num = 1;
+            if (num > studyList.length) num = studyList.length;
+            currentReviewCardIndex = num - 1;
+            isCardBackVisible = false;
+            renderFlashcardReview();
+        }
+
+        function shuffleFlashcardsOrder() {
+            for (let i = appData.flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temp = appData.flashcards[i];
+                appData.flashcards[i] = appData.flashcards[j];
+                appData.flashcards[j] = temp;
+            }
+            currentReviewCardIndex = 0;
+            isCardBackVisible = false;
+            saveState(false);
+            showToast('🔀 Ordem dos cartões embaralhada!', 'info');
+        }
+
+        function toggleFlashcardStatus(cardId, targetStatus) {
+            const card = appData.flashcards.find(c => c.id === cardId);
+            if (!card) return;
+            // Alterna o status sem avançar para o próximo cartão
+            card.status = (card.status === targetStatus) ? 'normal' : targetStatus;
+            saveState();
+        }
+
+        function resetFlashcardStudyFilters() {
+            const sEl = document.getElementById('fc-study-subject');
+            const tEl = document.getElementById('fc-study-topic');
+            const stEl = document.getElementById('fc-study-status');
+            if (sEl) sEl.value = 'all';
+            if (stEl) stEl.value = 'all';
+            populateStudyTopicDropdown();
+            if (tEl) tEl.value = 'all';
+            currentReviewCardIndex = 0;
+            isCardBackVisible = false;
+            renderFlashcardReview();
+        }
+
+        function renderFlashcardBrowser() {
+            const grid = document.getElementById('fc-browser-grid');
+            const subjFilter = document.getElementById('filter-fc-subject').value;
+            const search = document.getElementById('filter-fc-search').value.trim().toLowerCase();
+
+            const filtered = appData.flashcards.filter(c => {
+                if (subjFilter !== 'all' && c.subject !== subjFilter) return false;
+                if (search) {
+                    const hay = `${c.topic} ${c.front} ${c.back}`.toLowerCase();
+                    if (!hay.includes(search)) return false;
+                }
+                return true;
+            });
+
+            grid.innerHTML = '';
+            filtered.forEach((card, idx) => {
+                const subj = SUBJECTS[card.subject] || SUBJECTS.especificos;
+                const st = card.status || 'normal';
+                const statusLabel = st === 'review'
+                    ? '⭐ Para Revisar'
+                    : (st === 'mastered' ? '✅ Dominado' : `#${idx + 1}`);
+                const statusColor = st === 'review'
+                    ? 'text-amber-500 font-bold'
+                    : (st === 'mastered' ? 'text-emerald-500 font-bold' : 'text-slate-400');
+
+                const el = document.createElement('div');
+                el.className = 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-3';
+                el.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="px-2 py-0.5 text-[11px] font-bold rounded border ${subj.badgeClass}">${subj.shortName}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-mono ${statusColor}">
+                                    ${statusLabel}
+                                </span>
+                                <button onclick="deleteFlashcard('${card.id}')" class="text-slate-400 hover:text-rose-500" title="Excluir cartão">
+                                    <i class="fa-regular fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs font-bold text-slate-400">${escapeHtml(card.topic)}</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">${formatCleanCardText(card.front)}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl whitespace-pre-line">${formatCleanCardText(card.back)}</p>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        function openFlashcardModal() {
+            document.getElementById('flashcard-form').reset();
+            const modal = document.getElementById('flashcard-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeFlashcardModal() {
+            const modal = document.getElementById('flashcard-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveFlashcardForm(e) {
+            e.preventDefault();
+            const cleanFront = document.getElementById('fc-form-front').value.trim().replace(/\[([^\]]+)\]/g, '$1');
+            const cleanBack = document.getElementById('fc-form-back').value.trim().replace(/\[([^\]]+)\]/g, '$1');
+            const newCard = {
+                id: 'fc_' + Date.now(),
+                subject: document.getElementById('fc-form-subject').value,
+                topic: document.getElementById('fc-form-topic').value.trim(),
+                front: cleanFront,
+                back: cleanBack,
+                status: 'normal',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            };
+            appData.flashcards.unshift(newCard);
+            currentReviewCardIndex = 0;
+            isCardBackVisible = false;
+            closeFlashcardModal();
+            saveState();
+            showToast('Cartão criado com sucesso!', 'success');
+        }
                 return `<span onclick="event.stopPropagation(); this.classList.toggle('cloze-hidden'); this.classList.toggle('cloze-revealed')" class="cloze-hidden" title="Clique para revelar a lacuna">${inner}</span>`;
             });
         }
@@ -2960,9 +3146,11 @@
                     return;
                 }
 
+                const { migrated } = sanitizeAndMigrateFlashcards(remoteData.flashcards || []);
+
                 appData = {
                     questions: remoteData.questions || [],
-                    flashcards: remoteData.flashcards || [],
+                    flashcards: migrated,
                     cycle: remoteData.cycle || INITIAL_CYCLE,
                     studyMinutes: remoteData.studyMinutes || 0,
                     updatedAt: remoteData.updatedAt || Date.now()
@@ -2999,6 +3187,8 @@
                     if (!imported.questions || !imported.flashcards) {
                         throw new Error('Formato inválido');
                     }
+                    const { migrated } = sanitizeAndMigrateFlashcards(imported.flashcards);
+                    imported.flashcards = migrated;
                     appData = imported;
                     saveState(false);
                     showToast('Backup importado com sucesso!', 'success');
@@ -3047,6 +3237,24 @@
             setInterval(updateCountdown, 60000);
             updateTimerDisplay();
             refreshAllViews();
+
+            // Atalhos de teclado para navegar nos cartões (Setas Esquerda/Direita e Espaço)
+            window.addEventListener('keydown', function (e) {
+                if (currentTab !== 'flashcards' || flashcardMode !== 'review') return;
+                const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+                if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevFlashcard();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextFlashcard();
+                } else if (e.key === ' ' || e.code === 'Space') {
+                    e.preventDefault();
+                    toggleCardBack();
+                }
+            });
         };
     </script>
 </body>
