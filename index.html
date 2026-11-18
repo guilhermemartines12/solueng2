@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFMS 2027 | Gestão Pública (FAPEC) - Central de Estudos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ufms: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para lacunas ocultas nos Flashcards (Cloze Deletion) */
+        .cloze-hidden {
+            background-color: rgba(14, 165, 233, 0.25);
+            color: transparent;
+            border-bottom: 2px dashed #38bdf8;
+            border-radius: 4px;
+            padding: 0 6px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .cloze-hidden::after {
+            content: '[...]';
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 0.85em;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .cloze-revealed {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border-bottom: 2px solid #10b981;
+            border-radius: 4px;
+            padding: 0 6px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        /* Scrollbar suave */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Notificações Toast (Substituto seguro para alert) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Modal de Confirmação Genérico (Substituto seguro para confirm) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-3 text-amber-500">
+                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                <h3 id="confirm-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirmar Ação</h3>
+            </div>
+            <p id="confirm-message" class="text-sm text-slate-600 dark:text-slate-300 mb-6"></p>
+            <div class="flex justify-end gap-3">
+                <button id="confirm-cancel-btn" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">
+                    Cancelar
+                </button>
+                <button id="confirm-ok-btn" class="px-4 py-2 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <!-- Identificação do Concurso -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-building-columns text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                            UFMS • Cód. 523
+                        </span>
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                            Banca FAPEC
+                        </span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
+                        Analista em Educação • Gestão Pública (Campo Grande)
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Controles Superiores: Contagem Regressiva, Nuvem e Tema -->
+            <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+                <!-- Contagem Regressiva Compacta -->
+                <div class="hidden md:flex items-center gap-2.5 bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/70 px-3.5 py-1.5 rounded-xl">
+                    <i class="fa-regular fa-calendar-check text-sky-500"></i>
+                    <div class="text-xs">
+                        <span class="text-slate-500 dark:text-slate-400 block leading-none">Prova 17/01/2027</span>
+                        <span id="header-countdown" class="font-mono font-bold text-slate-800 dark:text-slate-100">Calculando...</span>
+                    </div>
+                </div>
+
+                <!-- Botão Nuvem Firebase / Backup -->
+                <button onclick="openCloudModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/20 transition">
+                    <i id="cloud-status-icon" class="fa-solid fa-cloud"></i>
+                    <span class="hidden sm:inline">Sincronizar Nuvem</span>
+                    <span id="cloud-badge" class="w-2 h-2 rounded-full bg-amber-300" title="Apenas LocalStorage ativo"></span>
+                </button>
+
+                <!-- Alternar Tema Claro/Escuro -->
+                <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="Alternar Tema">
+                    <i id="theme-icon" class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navegação por Abas -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex overflow-x-auto no-scrollbar border-t border-slate-100 dark:border-slate-800/60">
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-sky-500 text-sky-600 dark:text-sky-400 whitespace-nowrap transition">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Painel & Pesos</span>
+            </button>
+            <button onclick="switchTab('questions')" id="tab-btn-questions" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Questões & Erros</span>
+                <span id="nav-questions-badge" class="px-1.5 py-0.5 text-xs rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">0</span>
+            </button>
+            <button onclick="switchTab('flashcards')" id="tab-btn-flashcards" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Cartões (Anki)</span>
+                <span id="nav-due-badge" class="px-1.5 py-0.5 text-xs rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold">0 hoje</span>
+            </button>
+            <button onclick="switchTab('cycle')" id="tab-btn-cycle" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition">
+                <i class="fa-solid fa-stopwatch"></i>
+                <span>Ciclo & Pomodoro</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+        <!-- ================= ABA 1: DASHBOARD (PAINEL GERAL) ================= -->
+        <section id="tab-dashboard" class="space-y-6">
+            <!-- Alerta de Disciplina Zerada (Regra Eliminatória do Edital) -->
+            <div id="zero-alert-banner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-amber-700 dark:text-amber-300">
+                            Atenção ao Corte Eliminatório do Edital UFMS!
+                        </h3>
+                        <p id="zero-alert-text" class="text-xs text-amber-600/90 dark:text-amber-200/80 mt-0.5">
+                            O edital elimina quem obtiver nota zero em qualquer uma das 5 disciplinas. Resolva questões em todas as matérias para calibrar sua nota projetada.
+                        </p>
+                    </div>
+                </div>
+                <button onclick="switchTab('questions')" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                    Treinar Agora
+                </button>
+            </div>
+
+            <!-- Cards de Resumo (KPIs) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- KPI 1: Nota Projetada -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Nota Projetada (0 a 100)</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="kpi-projected-score" class="text-3xl font-extrabold font-mono text-sky-600 dark:text-sky-400">0.0</span>
+                                <span class="text-xs text-slate-400">/ 100 pts</span>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center">
+                            <i class="fa-solid fa-trophy text-lg"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                        Ponderada pelos pesos reais do edital (Específicos, Leg. e RL = Peso 2).
+                    </p>
+                </div>
+
+                <!-- KPI 2: Desempenho em Questões -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Aproveitamento Global</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="kpi-accuracy" class="text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">0%</span>
+                                <span id="kpi-questions-count" class="text-xs text-slate-400">(0 resolvidas)</span>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                            <i class="fa-solid fa-bullseye text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+                        <div id="kpi-accuracy-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Cartões para Hoje -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Revisão Espaçada Hoje</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="kpi-due-cards" class="text-3xl font-extrabold font-mono text-rose-600 dark:text-rose-400">0</span>
+                                <span id="kpi-total-cards" class="text-xs text-slate-400">de 0 cartões</span>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                            <i class="fa-solid fa-bolt text-lg"></i>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('flashcards')" class="mt-3 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1">
+                        <span>Iniciar revisão diária</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- KPI 4: Contagem Regressiva UFMS -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Reta Final • 17/01/2027</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="kpi-days-left" class="text-3xl font-extrabold font-mono text-indigo-600 dark:text-indigo-400">--</span>
+                                <span class="text-xs text-slate-400">dias restantes</span>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                            <i class="fa-solid fa-hourglass-half text-lg"></i>
+                        </div>
+                    </div>
+                    <p id="kpi-study-hours" class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                        Tempo líquido cronometrado: <strong class="text-slate-700 dark:text-slate-200">0h 00m</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tabela/Matriz de Desempenho Ponderado pelo Edital UFMS -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced text-sky-500"></i>
+                            <span>Raio-X Ponderado por Pesos do Edital (UFMS - Cód. 523)</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            80% dos pontos da prova estão concentrados em Conhecimentos Específicos, Legislação e Raciocínio Lógico.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                            Total da Prova: <strong>60 questões = 100 pontos</strong>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50 dark:bg-slate-950/40">
+                                <th class="py-3.5 px-4">Disciplina</th>
+                                <th class="py-3.5 px-4 text-center">Questões na Prova</th>
+                                <th class="py-3.5 px-4 text-center">Peso</th>
+                                <th class="py-3.5 px-4 text-center">Máx. Pontos</th>
+                                <th class="py-3.5 px-4 text-center">Resolvidas (Acertos/Erros)</th>
+                                <th class="py-3.5 px-4">Aproveitamento</th>
+                                <th class="py-3.5 px-4 text-right">Pontos Projetados</th>
+                            </tr>
+                        </thead>
+                        <tbody id="edital-weights-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Guia Rápido de Estudo Reverso + Caderno de Erros -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gradient-to-br from-sky-500/10 to-indigo-500/5 border border-sky-500/20 rounded-2xl p-5">
+                    <div class="flex items-center gap-2.5 text-sky-600 dark:text-sky-400 font-bold text-sm mb-2">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>1. Estudo Reverso FAPEC</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Comece cada bloco resolvendo questões da FAPEC (ou Vunesp/AOCP). Consulte a lei seca (Lei 14.133, Lei 8.112, Decreto 9.203) direto nos pontos em que errar ou hesitar.
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-rose-500/10 to-orange-500/5 border border-rose-500/20 rounded-2xl p-5">
+                    <div class="flex items-center gap-2.5 text-rose-600 dark:text-rose-400 font-bold text-sm mb-2">
+                        <i class="fa-solid fa-clone"></i>
+                        <span>2. Cartão Orientado ao Erro</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Errou uma questão no banco? Clique em <strong>"Criar Cartão deste Erro"</strong> e use colchetes como <code class="px-1 py-0.5 rounded bg-rose-500/20 text-rose-400">[30 dias]</code> para ocultar prazos e exceções.
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-5">
+                    <div class="flex items-center gap-2.5 text-emerald-600 dark:text-emerald-400 font-bold text-sm mb-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>3. Acesso de Qualquer Lugar</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Conecte sua URL gratuita do <strong>Firebase Realtime Database</strong> no botão "Sincronizar Nuvem" para estudar no PC e revisar seus cartões no celular pelo 4G.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 2: BANCO DE QUESTÕES E CADERNO DE ERROS ================= -->
+        <section id="tab-questions" class="hidden space-y-6">
+            <!-- Barra de Ações e Filtros -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-book-open-reader text-sky-500"></i>
+                            <span>Banco de Questões & Caderno de Erros</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Resolva questões no padrão FAPEC (A a E), veja o comentário da lei e transforme seus erros em flashcards com 1 clique.
+                        </p>
+                    </div>
+                    <button onclick="openQuestionModal()" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white shadow-sm shadow-sky-600/20 flex items-center gap-2 transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nova Questão</span>
+                    </button>
+                </div>
+
+                <!-- Controles de Filtro -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <!-- Filtro por Disciplina -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Disciplina</label>
+                        <select id="filter-q-subject" onchange="renderQuestions()" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todas as Disciplinas (5)</option>
+                            <option value="especificos">Conhecimentos Específicos (Peso 2)</option>
+                            <option value="legislacao">Legislação (Peso 2)</option>
+                            <option value="raciocinio">Raciocínio Lógico (Peso 2)</option>
+                            <option value="portugues">Língua Portuguesa (Peso 1)</option>
+                            <option value="ingles">Língua Inglesa (Peso 1)</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro por Status (Caderno de Erros) -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Caderno / Status</label>
+                        <select id="filter-q-status" onchange="renderQuestions()" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todas as Questões</option>
+                            <option value="wrong">🚨 Caderno de Erros (Erradas)</option>
+                            <option value="unanswered">⏳ Não Resolvidas</option>
+                            <option value="correct">✅ Acertadas</option>
+                        </select>
+                    </div>
+
+                    <!-- Busca por Palavra-Chave -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Buscar no Enunciado / Tópico</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                            <input type="text" id="filter-q-search" oninput="renderQuestions()" placeholder="Ex: 14.133, posse, condicional..." class="w-full pl-9 pr-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Questões -->
+            <div id="questions-list" class="space-y-4">
+                <!-- Preenchido via JS -->
+            </div>
+        </section>
+
+        <!-- ================= ABA 3: FLASHCARDS (ESTILO ANKI) ================= -->
+        <section id="tab-flashcards" class="hidden space-y-6">
+            <!-- Topo dos Flashcards -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-rose-500"></i>
+                        <span>Flashcards com Repetição Espaçada</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Use <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-sky-500 font-mono">[colchetes]</code> na Frente do cartão para criar lacunas ocultas clicáveis.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="setFlashcardMode('review')" id="btn-fc-mode-review" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Fila de Hoje (<span id="fc-due-counter">0</span>)</span>
+                    </button>
+                    <button onclick="setFlashcardMode('browse')" id="btn-fc-mode-browse" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-table-list"></i>
+                        <span>Ver Todos (<span id="fc-total-counter">0</span>)</span>
+                    </button>
+                    <button onclick="openFlashcardModal()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Novo Cartão</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modo 1: Arena de Revisão Ativa -->
+            <div id="fc-review-view" class="max-w-2xl mx-auto">
+                <!-- Preenchido dinamicamente pelo JS -->
+            </div>
+
+            <!-- Modo 2: Gerenciador / Todos os Cartões -->
+            <div id="fc-browse-view" class="hidden space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+                    <select id="filter-fc-subject" onchange="renderFlashcardBrowser()" class="px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <option value="all">Todas as Disciplinas</option>
+                        <option value="especificos">Conhecimentos Específicos</option>
+                        <option value="legislacao">Legislação</option>
+                        <option value="raciocinio">Raciocínio Lógico</option>
+                        <option value="portugues">Língua Portuguesa</option>
+                        <option value="ingles">Língua Inglesa</option>
+                    </select>
+                    <div class="relative flex-1 min-w-[220px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="filter-fc-search" oninput="renderFlashcardBrowser()" placeholder="Pesquisar frente, verso ou tópico..." class="w-full pl-9 pr-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+                <div id="fc-browser-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 4: CICLO DE ESTUDOS & TIMER POMODORO ================= -->
+        <section id="tab-cycle" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Coluna Esquerda: Timer Pomodoro (50/10) -->
+                <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-stopwatch text-sky-500"></i>
+                                <span>Cronômetro de Bloco</span>
+                            </h2>
+                            <span id="timer-mode-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/10 text-sky-500 border border-sky-500/20">
+                                FOCO (ESTUDO)
+                            </span>
+                        </div>
+
+                        <!-- Seletor de Disciplina Ativa -->
+                        <div class="mb-5">
+                            <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1.5">Matéria em estudo neste bloco</label>
+                            <select id="timer-subject-select" class="w-full px-3.5 py-2.5 rounded-xl text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <option value="especificos">🎯 Conhecimentos Específicos (Peso 2)</option>
+                                <option value="legislacao">⚖️ Legislação UFMS / 8.112 (Peso 2)</option>
+                                <option value="raciocinio">🧠 Raciocínio Lógico (Peso 2)</option>
+                                <option value="portugues">📘 Língua Portuguesa (Peso 1)</option>
+                                <option value="ingles">🌎 Língua Inglesa (Peso 1)</option>
+                            </select>
+                        </div>
+
+                        <!-- Visor do Relógio -->
+                        <div class="my-6 py-8 rounded-2xl bg-slate-100/80 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-center relative">
+                            <div id="timer-display" class="text-6xl sm:text-7xl font-mono font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                50:00
+                            </div>
+                            <p id="timer-subtext" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                                Bloco ideal: 35 min Questões FAPEC + 15 min Flashcards
+                            </p>
+                        </div>
+
+                        <!-- Botões de Controle do Timer -->
+                        <div class="flex items-center justify-center gap-3 mb-6">
+                            <button onclick="toggleTimer()" id="timer-start-btn" class="flex-1 py-3 px-5 rounded-xl font-bold text-sm bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-600/20 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Iniciar Bloco</span>
+                            </button>
+                            <button onclick="resetTimer()" class="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="Reiniciar Relógio">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                            <button onclick="completeTimerSessionManually()" class="p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition" title="Concluir e Registrar Minutos Agora">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Presets de Tempo -->
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                        <span class="block text-[11px] font-bold uppercase text-slate-400 mb-2">Ajuste Rápido (Minutos)</span>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setTimerPreset(50, 'focus')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+                                50m Estudo
+                            </button>
+                            <button onclick="setTimerPreset(25, 'focus')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+                                25m Pomodoro
+                            </button>
+                            <button onclick="setTimerPreset(10, 'break')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition">
+                                10m Pausa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Ciclo Semanal Ponderado (70% Peso 2 / 30% Peso 1) -->
+                <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-repeat text-emerald-500"></i>
+                                <span>Ciclo Estratégico de Estudos (Regra 70/30)</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                14 blocos semanais sugeridos: 10 blocos de Peso 2 (71%) e 4 blocos de Peso 1 (29%).
+                            </p>
+                        </div>
+                        <button onclick="resetCycleCheckboxes()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>Novo Giro do Ciclo</span>
+                        </button>
+                    </div>
+
+                    <!-- Barra de Progresso do Ciclo -->
+                    <div class="mb-5">
+                        <div class="flex justify-between text-xs font-semibold mb-1.5">
+                            <span class="text-slate-500 dark:text-slate-400">Progresso do Giro Atual</span>
+                            <span id="cycle-progress-text" class="text-emerald-600 dark:text-emerald-400 font-mono">0 / 14 blocos (0%)</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div id="cycle-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Blocos do Ciclo -->
+                    <div id="cycle-blocks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 overflow-y-auto max-h-[380px] pr-1">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= MODAL 1: CRIAR / EDITAR QUESTÃO ================= -->
+    <div id="question-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
+                <h3 id="question-modal-title" class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-circle-plus text-sky-500"></i>
+                    <span>Cadastrar Questão no Banco</span>
+                </h3>
+                <button onclick="closeQuestionModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="question-form" onsubmit="saveQuestionForm(event)" class="space-y-4">
+                <input type="hidden" id="q-form-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Disciplina *</label>
+                        <select id="q-form-subject" required class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                            <option value="especificos">Conhecimentos Específicos (Peso 2)</option>
+                            <option value="legislacao">Legislação (Peso 2)</option>
+                            <option value="raciocinio">Raciocínio Lógico (Peso 2)</option>
+                            <option value="portugues">Língua Portuguesa (Peso 1)</option>
+                            <option value="ingles">Língua Inglesa (Peso 1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tópico do Edital *</label>
+                        <input type="text" id="q-form-topic" required placeholder="Ex: Lei 14.133/2021 - Dispensa" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Enunciado da Questão *</label>
+                    <textarea id="q-form-statement" rows="3" required placeholder="Cole ou digite o enunciado da questão da FAPEC..." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase text-slate-400">Alternativas (A a E) *</label>
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">A</span>
+                        <input type="text" id="q-form-opt-A" required placeholder="Texto da alternativa A" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">B</span>
+                        <input type="text" id="q-form-opt-B" required placeholder="Texto da alternativa B" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">C</span>
+                        <input type="text" id="q-form-opt-C" required placeholder="Texto da alternativa C" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">D</span>
+                        <input type="text" id="q-form-opt-D" required placeholder="Texto da alternativa D" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold flex items-center justify-center shrink-0">E</span>
+                        <input type="text" id="q-form-opt-E" required placeholder="Texto da alternativa E" class="w-full px-3 py-1.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Gabarito Correto *</label>
+                        <select id="q-form-correct" required class="w-full px-3 py-2 rounded-xl text-sm font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                            <option value="A">Alternativa A</option>
+                            <option value="B">Alternativa B</option>
+                            <option value="C">Alternativa C</option>
+                            <option value="D">Alternativa D</option>
+                            <option value="E">Alternativa E</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Comentário / Artigo da Lei (Fundamentação) *</label>
+                        <textarea id="q-form-explanation" rows="2" required placeholder="Resumo da regra ou artigo da lei que responde à questão..." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <button type="button" onclick="closeQuestionModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white">
+                        Salvar Questão
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL 2: CRIAR / EDITAR FLASHCARD ================= -->
+    <div id="flashcard-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-rose-500"></i>
+                    <span>Criar Cartão de Lembrete (Flashcard)</span>
+                </h3>
+                <button onclick="closeFlashcardModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="flashcard-form" onsubmit="saveFlashcardForm(event)" class="space-y-4">
+                <input type="hidden" id="fc-form-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Disciplina *</label>
+                        <select id="fc-form-subject" required class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                            <option value="especificos">Conhecimentos Específicos</option>
+                            <option value="legislacao">Legislação</option>
+                            <option value="raciocinio">Raciocínio Lógico</option>
+                            <option value="portugues">Língua Portuguesa</option>
+                            <option value="ingles">Língua Inglesa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tópico *</label>
+                        <input type="text" id="fc-form-topic" required placeholder="Ex: Prazos Lei 8.112/90" class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-bold uppercase text-slate-400">Frente (Pergunta ou Frase com Lacuna) *</label>
+                        <button type="button" onclick="wrapSelectionInCloze()" class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition">
+                            + Ocultar Seleção [...]
+                        </button>
+                    </div>
+                    <textarea id="fc-form-front" rows="3" required placeholder="Ex: Na Lei 8.112/90, o prazo para posse é de [30 dias] e para entrar em exercício é de [15 dias]." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Dica: Tudo que estiver entre colchetes <code class="text-sky-400">[assim]</code> ficará oculto até você clicar ou virar o cartão.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Verso (Resposta Direta / Artigo da Lei) *</label>
+                    <textarea id="fc-form-back" rows="3" required placeholder="Resposta curta (máx. 10 segundos de leitura)..." class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <button type="button" onclick="closeFlashcardModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white">
+                        Salvar Cartão
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL 3: SINCRONIZAÇÃO FIREBASE & BACKUP JSON ================= -->
+    <div id="cloud-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl my-8">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Sincronização na Nuvem & Backup</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Acesse seus cartões e questões do PC ou celular</p>
+                    </div>
+                </div>
+                <button onclick="closeCloudModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">
+                        URL do Firebase Realtime Database
+                    </label>
+                    <input type="url" id="firebase-url-input" placeholder="https://seu-projeto-default-rtdb.firebaseio.com" class="w-full px-3.5 py-2.5 rounded-xl text-sm font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">
+                        Token / Segredo do Banco (Opcional - deixe vazio se em Modo de Teste)
+                    </label>
+                    <input type="password" id="firebase-secret-input" placeholder="Opcional (?auth=...)" class="w-full px-3.5 py-2 rounded-xl text-sm font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                </div>
+
+                <label class="flex items-center gap-2.5 cursor-pointer select-none pt-1">
+                    <input type="checkbox" id="firebase-autosync-check" onchange="saveCloudSettings()" class="w-4 h-4 rounded text-emerald-600 focus:ring-0">
+                    <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Sincronizar automaticamente na nuvem a cada questão/cartão respondido
+                    </span>
+                </label>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <button onclick="pushToFirebase(false)" class="py-2.5 px-4 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Enviar para Nuvem (Salvar)</span>
+                    </button>
+                    <button onclick="pullFromFirebase()" class="py-2.5 px-4 rounded-xl text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                        <span>Baixar da Nuvem (Carregar)</span>
+                    </button>
+                </div>
+
+                <p id="cloud-last-sync" class="text-xs text-center text-slate-400 font-mono">
+                    Status: Armazenamento Local (LocalStorage) ativo.
+                </p>
+
+                <!-- Backup em Arquivo JSON -->
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <span class="block text-xs font-bold uppercase text-slate-400 mb-2">Backup Manual em Arquivo (.JSON)</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportBackupJSON()" class="flex-1 py-2 px-3 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Exportar .JSON</span>
+                        </button>
+                        <label class="flex-1 py-2 px-3 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2 cursor-pointer transition">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>Importar .JSON</span>
+                            <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Principal da Aplicação -->
+    <script>
+        /* ==========================================================================
+           1. CONFIGURAÇÃO DO EDITAL UFMS (FAPEC) - GESTÃO PÚBLICA (CÓD. 523)
+           ========================================================================== */
+        const EXAM_DATE = new Date('2027-01-17T08:00:00-04:00'); // Horário de Campo Grande/MS (UTC-4)
+        const STORAGE_KEY = 'ufms_fapec_523_study_db_v1';
+        const CLOUD_CONFIG_KEY = 'ufms_fapec_523_cloud_cfg';
+
+        const SUBJECTS = {
+            especificos: {
+                id: 'especificos',
+                name: 'Conhecimentos Específicos',
+                shortName: 'Específicos',
+                examQuestions: 20,
+                weight: 2,
+                maxPoints: 40,
+                badgeClass: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+                barColor: 'bg-sky-500'
+            },
+            legislacao: {
+                id: 'legislacao',
+                name: 'Legislação (8.112, CF e UFMS)',
+                shortName: 'Legislação',
+                examQuestions: 10,
+                weight: 2,
+                maxPoints: 20,
+                badgeClass: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+                barColor: 'bg-amber-500'
+            },
+            raciocinio: {
+                id: 'raciocinio',
+                name: 'Raciocínio Lógico',
+                shortName: 'Rac. Lógico',
+                examQuestions: 10,
+                weight: 2,
+                maxPoints: 20,
+                badgeClass: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+                barColor: 'bg-purple-500'
+            },
+            portugues: {
+                id: 'portugues',
+                name: 'Língua Portuguesa',
+                shortName: 'Português',
+                examQuestions: 15,
+                weight: 1,
+                maxPoints: 15,
+                badgeClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+                barColor: 'bg-emerald-500'
+            },
+            ingles: {
+                id: 'ingles',
+                name: 'Língua Inglesa',
+                shortName: 'Inglês',
+                examQuestions: 5,
+                weight: 1,
+                maxPoints: 5,
+                badgeClass: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+                barColor: 'bg-rose-500'
+            }
+        };
+
+        /* ==========================================================================
+           2. DADOS INICIAIS PRÉ-CADASTRADOS (QUESTÕES FAPEC + FLASHCARDS)
+           ========================================================================== */
+        const INITIAL_QUESTIONS = [
+            {
+                id: 'q1',
+                subject: 'especificos',
+                topic: 'Lei nº 14.133/2021 - Modalidades de Licitação',
+                statement: '(Perfil FAPEC / Gestão Pública) De acordo com a Nova Lei de Licitações e Contratos Administrativos (Lei nº 14.133/2021), a modalidade de licitação obrigatória para aquisição de bens e serviços comuns, cujo critério de julgamento poderá ser o de menor preço ou o de maior desconto, denomina-se:',
+                options: {
+                    A: 'Concorrência.',
+                    B: 'Diálogo Competitivo.',
+                    C: 'Tomada de Preços.',
+                    D: 'Pregão.',
+                    E: 'Leilão.'
+                },
+                correct: 'D',
+                explanation: 'Art. 6º, XLI da Lei nº 14.133/2021: O Pregão é a modalidade obrigatória para aquisição de bens e serviços comuns (menor preço ou maior desconto). Lembre-se também de que Tomada de Preços e Convite foram extintos pela nova lei.',
+                status: 'unanswered',
+                selectedOption: null,
+                attempts: 0
+            },
+            {
+                id: 'q2',
+                subject: 'legislacao',
+                topic: 'Lei nº 8.112/1990 - Provimento, Posse e Exercício',
+                statement: '(Perfil FAPEC / UFMS) Segundo o Regime Jurídico dos Servidores Públicos Civis da União (Lei nº 8.112/1990), a investidura em cargo público ocorrerá com a posse. Sobre os prazos legais de posse e exercício, assinale a alternativa CORRETA:',
+                options: {
+                    A: 'A posse ocorrerá no prazo de 15 dias contados da publicação do ato de provimento, e o exercício em 30 dias.',
+                    B: 'A posse ocorrerá no prazo de 30 dias contados da publicação do ato de provimento, e o prazo para entrar em exercício é de 15 dias contados da data da posse.',
+                    C: 'Tanto a posse quanto a entrada em exercício possuem prazo improrrogável de 30 dias corridos.',
+                    D: 'Se o servidor não entrar em exercício no prazo legal, seu ato de provimento será tornado sem efeito.',
+                    E: 'Não se admite, em nenhuma hipótese, a posse mediante procuração específica.'
+                },
+                correct: 'B',
+                explanation: 'Art. 13, § 1º e Art. 15, § 1º da Lei 8.112/90: Posse = 30 dias da publicação do ato de provimento (se não tomar posse, o ato é tornado sem efeito). Exercício = 15 dias da posse (se não entrar em exercício, o servidor é exonerado de ofício).',
+                status: 'unanswered',
+                selectedOption: null,
+                attempts: 0
+            },
+            {
+                id: 'q3',
+                subject: 'raciocinio',
+                topic: 'Lógica Proposicional - Equivalência e Negação',
+                statement: '(Perfil FAPEC) Considere verdadeira a afirmação condicional: "Se o processo está instruído, então o gestor assina o empenho". A proposição logicamente EQUIVALENTE a essa afirmação é:',
+                options: {
+                    A: 'O processo está instruído e o gestor não assina o empenho.',
+                    B: 'Se o gestor assina o empenho, então o processo está instruído.',
+                    C: 'Se o processo não está instruído, então o gestor não assina o empenho.',
+                    D: 'Se o gestor não assina o empenho, então o processo não está instruído.',
+                    E: 'O processo está instruído ou o gestor não assina o empenho.'
+                },
+                correct: 'D',
+                explanation: 'Equivalência contrapositiva da condicional (P -> Q): inverte e nega ambos os termos (~Q -> ~P): "Se o gestor NÃO assina o empenho, então o processo NÃO está instruído". Já a alternativa A traz a NEGAÇÃO (MANÉ: Mantém a primeira E Nega a segunda).',
+                status: 'unanswered',
+                selectedOption: null,
+                attempts: 0
+            },
+            {
+                id: 'q4',
+                subject: 'portugues',
+                topic: 'Sintaxe e Conjunções Subordinativas',
+                statement: '(Perfil FAPEC) No período "Embora o orçamento anual apresentasse restrições severas, a universidade manteve os projetos prioritários de pesquisa", a oração destacada no início do enunciado estabelece relação semântica de:',
+                options: {
+                    A: 'Causa.',
+                    B: 'Condição.',
+                    C: 'Concessão.',
+                    D: 'Consequência.',
+                    E: 'Proporcionalidade.'
+                },
+                correct: 'C',
+                explanation: 'A conjunção subordinativa "Embora" (assim como "ainda que", "mesmo que", "conquanto", "apesar de que") introduz uma oração subordinada adverbial CONCESSIVA, indicando um fato contrário que não impede a realização da oração principal.',
+                status: 'unanswered',
+                selectedOption: null,
+                attempts: 0
+            },
+            {
+                id: 'q5',
+                subject: 'ingles',
+                topic: 'Reading Comprehension & Connectors in Public Management',
+                statement: '(Perfil FAPEC) Read the excerpt: "Public governance mechanisms ensure that stakeholder interests are aligned with institutional outcomes; HOWEVER, bureaucratic rigidity often delays implementation." The capitalized word "HOWEVER" can be replaced, without change in meaning, by:',
+                options: {
+                    A: 'Therefore.',
+                    B: 'Moreover.',
+                    C: 'Nevertheless.',
+                    D: 'Because.',
+                    E: 'Furthermore.'
+                },
+                correct: 'C',
+                explanation: '"However" é um conectivo adversativo ("contudo, entretanto, porém"), sinônimo direto de "Nevertheless" e "Nonetheless". ("Therefore" = portanto; "Moreover/Furthermore" = além disso).',
+                status: 'unanswered',
+                selectedOption: null,
+                attempts: 0
+            }
+        ];
+
+        const INITIAL_FLASHCARDS = [
+            {
+                id: 'fc1',
+                subject: 'especificos',
+                topic: 'Orçamento Público (CF/88)',
+                front: 'Diferencie o papel do [PPA], da [LDO] e da [LOA] no ciclo orçamentário federal.',
+                back: '• PPA (Plano Plurianual): diretrizes, objetivos e metas de médio prazo (4 anos).\n• LDO (Lei de Diretrizes Orçamentárias): metas e prioridades para o exercício seguinte, orienta a LOA.\n• LOA (Lei Orçamentária Anual): estima receitas e fixa despesas para 1 ano (Orçamentos Fiscal, da Seguridade e de Investimento).',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            },
+            {
+                id: 'fc2',
+                subject: 'especificos',
+                topic: 'Lei nº 4.320/1964 - Despesa Pública',
+                front: 'Quais são os 3 estágios da execução da Despesa Pública na Lei 4.320/64? [Empenho], [Liquidação] e [Pagamento].',
+                back: '1. Empenho: ato que cria para o Estado obrigação de pagamento.\n2. Liquidação: verificação do direito adquirido pelo credor (confere se o bem/serviço foi entregue).\n3. Pagamento: despacho exarado determinando que a despesa seja paga.',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            },
+            {
+                id: 'fc3',
+                subject: 'especificos',
+                topic: 'Decreto nº 9.203/2017 - Governança Pública',
+                front: 'Segundo o Decreto nº 9.203/2017, quais são os 3 mecanismos para o exercício da Governança Pública? [Liderança], [Estratégia] e [Controle].',
+                back: 'Mnemônico LEC (Art. 5º):\n• Liderança (integridade, competência, responsabilidade e motivação);\n• Estratégia (alinhamento, escuta de demandas, avaliação de cenários);\n• Controle (gestão de riscos, transparência e prestação de contas).',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            },
+            {
+                id: 'fc4',
+                subject: 'legislacao',
+                topic: 'Lei nº 8.112/1990 - Prazos',
+                front: 'Na Lei 8.112/90, o prazo para POSSE é de [30 dias] e o prazo para entrar em EXERCÍCIO é de [15 dias].',
+                back: '• Não tomou posse em 30 dias -> Ato de provimento é tornado SEM EFEITO.\n• Tomou posse, mas não entrou em exercício em 15 dias -> Servidor é EXONERADO de ofício.',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            },
+            {
+                id: 'fc5',
+                subject: 'especificos',
+                topic: 'Lei nº 14.133/2021 - Dispensa por Valor',
+                front: 'Art. 75 da Lei 14.133/2021: A licitação é DISPENSÁVEL para obras/serviços de engenharia/manutenção de veículos até [R$ 100 mil] (valor base) e outros serviços e compras até [R$ 50 mil] (valor base).',
+                back: 'Atenção: A FAPEC pode cobrar tanto os valores originais do texto da lei (R$ 100.000,00 no inciso I e R$ 50.000,00 no inciso II) quanto mencionar que são atualizados anualmente por decreto a cada 1º de janeiro. Para autarquias/fundações qualificadas como Agências Executivas, o limite é o DOBRO.',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            },
+            {
+                id: 'fc6',
+                subject: 'raciocinio',
+                topic: 'Lógica - Negação da Condicional',
+                front: 'Como fazer a NEGAÇÃO da proposição condicional "Se P, então Q" (P -> Q)? Regra do [MANÉ: P e ~Q].',
+                back: 'MANÉ = MAntém a primeira E NEga a segunda (trocando o "Se... então" pelo conectivo "E").\nExemplo: Negação de "Se estudo, passo" = "Estudo E não passo".',
+                dueDate: Date.now() - 1000,
+                interval: 0
+            }
+        ];
+
+        const INITIAL_CYCLE = [
+            { id: 'c1', subject: 'especificos', title: 'Bloco 01 • Lei 14.133/2021 (Licitações)', done: false },
+            { id: 'c2', subject: 'legislacao', title: 'Bloco 02 • Lei 8.112/1990 (Regime Jurídico)', done: false },
+            { id: 'c3', subject: 'raciocinio', title: 'Bloco 03 • Lógica Proposicional & Tabelas', done: false },
+            { id: 'c4', subject: 'portugues', title: 'Bloco 04 • Morfossintaxe & Conjunções FAPEC', done: false },
+            { id: 'c5', subject: 'especificos', title: 'Bloco 05 • Orçamento (PPA, LDO, LOA e 4.320)', done: false },
+            { id: 'c6', subject: 'legislacao', title: 'Bloco 06 • CF/88 (Arts. 37 a 41) & Ética', done: false },
+            { id: 'c7', subject: 'especificos', title: 'Bloco 07 • Governança (Dec. 9.203) & Processos', done: false },
+            { id: 'c8', subject: 'raciocinio', title: 'Bloco 08 • Conjuntos, Contagem e Probabilidade', done: false },
+            { id: 'c9', subject: 'portugues', title: 'Bloco 09 • Concordância, Regência e Crase', done: false },
+            { id: 'c10', subject: 'especificos', title: 'Bloco 10 • Gestão de Pessoas e Materiais (ABC)', done: false },
+            { id: 'c11', subject: 'legislacao', title: 'Bloco 11 • Estatuto, Regimento e Normas UFMS', done: false },
+            { id: 'c12', subject: 'ingles', title: 'Bloco 12 • Leitura Instrumental e Conectivos', done: false },
+            { id: 'c13', subject: 'especificos', title: 'Bloco 13 • Contratos Administrativos e Fiscalização', done: false },
+            { id: 'c14', subject: 'raciocinio', title: 'Bloco 14 • Baterias Mistas FAPEC + Caderno de Erros', done: false }
+        ];
+
+        /* ==========================================================================
+           3. ESTADO DA APLICAÇÃO E PERSISTÊNCIA (LOCALSTORAGE + FIREBASE)
+           ========================================================================== */
+        let appData = {
+            questions: [],
+            flashcards: [],
+            cycle: [],
+            studyMinutes: 0,
+            updatedAt: Date.now()
+        };
+
+        let cloudConfig = {
+            url: '',
+            secret: '',
+            autoSync: false,
+            lastSync: null
+        };
+
+        // Estado de UI
+        let currentTab = 'dashboard';
+        let flashcardMode = 'review'; // 'review' ou 'browse'
+        let currentReviewCardIndex = 0;
+        let isCardBackVisible = false;
+
+        // Estado do Timer Pomodoro
+        let timerSeconds = 50 * 60;
+        let timerInitialMinutes = 50;
+        let timerMode = 'focus'; // 'focus' ou 'break'
+        let timerInterval = null;
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    appData.questions = parsed.questions || INITIAL_QUESTIONS;
+                    appData.flashcards = parsed.flashcards || INITIAL_FLASHCARDS;
+                    appData.cycle = parsed.cycle || INITIAL_CYCLE;
+                    appData.studyMinutes = parsed.studyMinutes || 0;
+                    appData.updatedAt = parsed.updatedAt || Date.now();
+                } else {
+                    appData.questions = JSON.parse(JSON.stringify(INITIAL_QUESTIONS));
+                    appData.flashcards = JSON.parse(JSON.stringify(INITIAL_FLASHCARDS));
+                    appData.cycle = JSON.parse(JSON.stringify(INITIAL_CYCLE));
+                    appData.studyMinutes = 0;
+                    saveState(false);
+                }
+
+                const rawCloud = localStorage.getItem(CLOUD_CONFIG_KEY);
+                if (rawCloud) {
+                    cloudConfig = { ...cloudConfig, ...JSON.parse(rawCloud) };
+                    document.getElementById('firebase-url-input').value = cloudConfig.url || '';
+                    document.getElementById('firebase-secret-input').value = cloudConfig.secret || '';
+                    document.getElementById('firebase-autosync-check').checked = !!cloudConfig.autoSync;
+                    updateCloudIndicator();
+                }
+            } catch (err) {
+                console.error('Erro ao carregar dados locais:', err);
+            }
+        }
+
+        function saveState(triggerAutoSync = true) {
+            appData.updatedAt = Date.now();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            refreshAllViews();
+            if (triggerAutoSync && cloudConfig.autoSync && cloudConfig.url) {
+                pushToFirebase(true);
+            }
+        }
+
+        /* ==========================================================================
+           4. NOTIFICAÇÕES TOAST E MODAL DE CONFIRMAÇÃO (SEM ALERT / CONFIRM)
+           ========================================================================== */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const colors = {
+                success: 'bg-emerald-600 text-white border-emerald-500',
+                error: 'bg-rose-600 text-white border-rose-500',
+                warning: 'bg-amber-500 text-slate-950 border-amber-400',
+                info: 'bg-slate-800 text-white border-slate-700'
+            };
+            const icons = {
+                success: 'fa-circle-check',
+                error: 'fa-circle-xmark',
+                warning: 'fa-triangle-exclamation',
+                info: 'fa-circle-info'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl text-sm font-medium transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icons[type] || icons.info} text-base shrink-0"></i>
+                <span class="flex-1">${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3400);
+        }
+
+        function showConfirmModal(title, message, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            const okBtn = document.getElementById('confirm-ok-btn');
+            const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+            const cleanup = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                okBtn.onclick = null;
+                cancelBtn.onclick = null;
+            };
+
+            okBtn.onclick = () => {
+                cleanup();
+                onConfirm();
+            };
+            cancelBtn.onclick = cleanup;
+        }
+
+        /* ==========================================================================
+           5. NAVEGAÇÃO, TEMA E CONTAGEM REGRESSIVA (17/01/2027)
+           ========================================================================== */
+        function switchTab(tabId) {
+            currentTab = tabId;
+            ['dashboard', 'questions', 'flashcards', 'cycle'].forEach(id => {
+                const section = document.getElementById(`tab-${id}`);
+                const btn = document.getElementById(`tab-btn-${id}`);
+                if (id === tabId) {
+                    section.classList.remove('hidden');
+                    btn.className = 'tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-sky-500 text-sky-600 dark:text-sky-400 whitespace-nowrap transition';
+                } else {
+                    section.classList.add('hidden');
+                    btn.className = 'tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition';
+                }
+            });
+            refreshAllViews();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('ufms_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('ufms_theme', 'dark');
+            }
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = EXAM_DATE - now;
+            const headerEl = document.getElementById('header-countdown');
+            const kpiDaysEl = document.getElementById('kpi-days-left');
+
+            if (diff <= 0) {
+                headerEl.textContent = 'É HOJE! Boa Prova!';
+                kpiDaysEl.textContent = '0';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            headerEl.textContent = `${days}d ${hours}h restantes`;
+            kpiDaysEl.textContent = days;
+        }
+
+        /* ==========================================================================
+           6. PAINEL GERAL E CÁLCULO DE NOTA PONDERADA UFMS
+           ========================================================================== */
+        function renderDashboard() {
+            const tbody = document.getElementById('edital-weights-tbody');
+            tbody.innerHTML = '';
+
+            let totalAnswered = 0;
+            let totalCorrect = 0;
+            let projectedTotalScore = 0;
+            let zeroedSubjects = [];
+
+            Object.values(SUBJECTS).forEach(subj => {
+                const subjQuestions = appData.questions.filter(q => q.subject === subj.id);
+                const answered = subjQuestions.filter(q => q.status === 'correct' || q.status === 'wrong');
+                const correct = subjQuestions.filter(q => q.status === 'correct').length;
+                const wrong = subjQuestions.filter(q => q.status === 'wrong').length;
+
+                totalAnswered += answered.length;
+                totalCorrect += correct;
+
+                const accuracy = answered.length > 0 ? (correct / answered.length) : 0;
+                const projectedSubjPoints = accuracy * subj.maxPoints;
+                projectedTotalScore += projectedSubjPoints;
+
+                if (correct === 0) {
+                    zeroedSubjects.push(subj.shortName);
+                }
+
+                const pctText = answered.length > 0 ? `${Math.round(accuracy * 100)}%` : 'Sem dados';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition';
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-md border ${subj.badgeClass}">
+                                Peso ${subj.weight}
+                            </span>
+                            <span class="font-semibold text-slate-900 dark:text-white">${subj.name}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center font-mono text-slate-600 dark:text-slate-300">${subj.examQuestions} q</td>
+                    <td class="py-3.5 px-4 text-center font-mono font-bold text-slate-700 dark:text-slate-200">x${subj.weight}</td>
+                    <td class="py-3.5 px-4 text-center font-mono font-bold text-slate-900 dark:text-white">${subj.maxPoints} pts</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <span class="text-xs font-mono px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800">
+                            <strong class="text-emerald-500">${correct}C</strong> / <strong class="text-rose-500">${wrong}E</strong> (de ${subjQuestions.length})
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 min-w-[140px]">
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div class="${subj.barColor} h-full rounded-full" style="width: ${Math.round(accuracy * 100)}%"></div>
+                            </div>
+                            <span class="text-xs font-mono font-bold w-12 text-right">${pctText}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-right font-mono font-extrabold text-sky-600 dark:text-sky-400">
+                        ${projectedSubjPoints.toFixed(1)} <span class="text-[11px] font-normal text-slate-400">/ ${subj.maxPoints}</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Atualizar KPIs
+            const globalAcc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+            document.getElementById('kpi-projected-score').textContent = projectedTotalScore.toFixed(1);
+            document.getElementById('kpi-accuracy').textContent = `${globalAcc}%`;
+            document.getElementById('kpi-questions-count').textContent = `(${totalAnswered} resolvidas)`;
+            document.getElementById('kpi-accuracy-bar').style.width = `${globalAcc}%`;
+
+            // Alerta de disciplina zerada
+            const zeroBanner = document.getElementById('zero-alert-banner');
+            const zeroText = document.getElementById('zero-alert-text');
+            if (zeroedSubjects.length > 0) {
+                zeroBanner.classList.remove('hidden');
+                zeroText.innerHTML = `Você ainda está com <strong>0 acertos</strong> registrados em: <strong>${zeroedSubjects.join(', ')}</strong>. Lembre-se: zerar qualquer prova elimina do concurso da UFMS!`;
+            } else {
+                zeroBanner.classList.add('hidden');
+            }
+
+            // Cartões para hoje
+            const now = Date.now();
+            const dueCards = appData.flashcards.filter(c => c.dueDate <= now).length;
+            document.getElementById('kpi-due-cards').textContent = dueCards;
+            document.getElementById('kpi-total-cards').textContent = `de ${appData.flashcards.length} cartões`;
+
+            // Tempo de estudo
+            const hours = Math.floor(appData.studyMinutes / 60);
+            const mins = appData.studyMinutes % 60;
+            document.getElementById('kpi-study-hours').innerHTML = `Tempo líquido cronometrado: <strong class="text-slate-700 dark:text-slate-200">${hours}h ${String(mins).padStart(2, '0')}m</strong>`;
+
+            // Badges de navegação
+            document.getElementById('nav-questions-badge').textContent = appData.questions.length;
+            document.getElementById('nav-due-badge').textContent = `${dueCards} hoje`;
+            document.getElementById('fc-due-counter').textContent = dueCards;
+            document.getElementById('fc-total-counter').textContent = appData.flashcards.length;
+        }
+
+        /* ==========================================================================
+           7. BANCO DE QUESTÕES E CADERNO DE ERROS
+           ========================================================================== */
+        function renderQuestions() {
+            const listEl = document.getElementById('questions-list');
+            const subjFilter = document.getElementById('filter-q-subject').value;
+            const statusFilter = document.getElementById('filter-q-status').value;
+            const searchFilter = document.getElementById('filter-q-search').value.trim().toLowerCase();
+
+            const filtered = appData.questions.filter(q => {
+                if (subjFilter !== 'all' && q.subject !== subjFilter) return false;
+                if (statusFilter !== 'all' && q.status !== statusFilter) return false;
+                if (searchFilter) {
+                    const haystack = `${q.topic} ${q.statement} ${q.explanation}`.toLowerCase();
+                    if (!haystack.includes(searchFilter)) return false;
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center">
+                        <i class="fa-solid fa-folder-open text-3xl text-slate-400 mb-2"></i>
+                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Nenhuma questão encontrada para este filtro.</p>
+                        <p class="text-xs text-slate-400 mt-1">Altere os filtros acima ou clique em "Nova Questão" para cadastrar.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            filtered.forEach((q, idx) => {
+                const subj = SUBJECTS[q.subject] || SUBJECTS.especificos;
+                const isAnswered = q.status === 'correct' || q.status === 'wrong';
+
+                let statusBadge = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Não Resolvida</span>`;
+                if (q.status === 'correct') {
+                    statusBadge = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-check mr-1"></i>Acertou</span>`;
+                } else if (q.status === 'wrong') {
+                    statusBadge = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400"><i class="fa-solid fa-xmark mr-1"></i>Caderno de Erros</span>`;
+                }
+
+                let optionsHtml = '';
+                ['A', 'B', 'C', 'D', 'E'].forEach(letter => {
+                    const optText = q.options[letter] || '';
+                    let btnStyle = 'border-slate-200 dark:border-slate-800 hover:border-sky-500/50 bg-slate-50/60 dark:bg-slate-950/50';
+                    let letterStyle = 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+
+                    if (isAnswered) {
+                        if (letter === q.correct) {
+                            btnStyle = 'border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 font-semibold';
+                            letterStyle = 'bg-emerald-500 text-white';
+                        } else if (letter === q.selectedOption && q.selectedOption !== q.correct) {
+                            btnStyle = 'border-rose-500 bg-rose-500/10 text-rose-900 dark:text-rose-200 line-through opacity-80';
+                            letterStyle = 'bg-rose-500 text-white';
+                        }
+                    }
+
+                    optionsHtml += `
+                        <button onclick="answerQuestion('${q.id}', '${letter}')" class="w-full text-left p-3 rounded-xl border ${btnStyle} flex items-start gap-3 transition">
+                            <span class="w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 ${letterStyle}">
+                                ${letter}
+                            </span>
+                            <span class="text-sm flex-1">${escapeHtml(optText)}</span>
+                        </button>
+                    `;
+                });
+
+                const card = document.createElement('div');
+                card.className = 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4';
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-md border ${subj.badgeClass}">
+                                ${subj.shortName} (Peso ${subj.weight})
+                            </span>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                • ${escapeHtml(q.topic)}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${statusBadge}
+                            <button onclick="deleteQuestion('${q.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 transition" title="Excluir questão">
+                                <i class="fa-regular fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-sm sm:text-base text-slate-800 dark:text-slate-100 leading-relaxed font-medium">
+                        ${escapeHtml(q.statement)}
+                    </p>
+
+                    <div class="space-y-2">
+                        ${optionsHtml}
+                    </div>
+
+                    <!-- Comentário e Botão Gerador de Cartão -->
+                    <div class="${isAnswered ? 'block' : 'hidden'} pt-3 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                        <div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-4 text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                            <strong class="text-sky-600 dark:text-sky-400 block mb-1">
+                                <i class="fa-solid fa-gavel mr-1"></i>Gabarito Oficial: Alternativa ${q.correct}
+                            </strong>
+                            ${escapeHtml(q.explanation)}
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <button onclick="createFlashcardFromQuestion('${q.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm flex items-center gap-2 transition">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>Criar Cartão deste Erro / Tópico</span>
+                            </button>
+                            <button onclick="resetQuestionStatus('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
+                                Limpar Resposta para Refazer
+                            </button>
+                        </div>
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function answerQuestion(questionId, chosenLetter) {
+            const q = appData.questions.find(item => item.id === questionId);
+            if (!q) return;
+
+            q.selectedOption = chosenLetter;
+            q.attempts = (q.attempts || 0) + 1;
+
+            if (chosenLetter === q.correct) {
+                q.status = 'correct';
+                showToast('Boa! Resposta correta registrada nas estatísticas.', 'success');
+            } else {
+                q.status = 'wrong';
+                showToast(`Incorreto (Gabarito: ${q.correct}). Questão adicionada ao Caderno de Erros!`, 'error');
+            }
+            saveState();
+        }
+
+        function resetQuestionStatus(questionId) {
+            const q = appData.questions.find(item => item.id === questionId);
+            if (!q) return;
+            q.status = 'unanswered';
+            q.selectedOption = null;
+            saveState();
+        }
+
+        function openQuestionModal() {
+            document.getElementById('question-form').reset();
+            document.getElementById('q-form-id').value = '';
+            const modal = document.getElementById('question-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeQuestionModal() {
+            const modal = document.getElementById('question-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveQuestionForm(e) {
+            e.preventDefault();
+            const newQuestion = {
+                id: 'q_' + Date.now(),
+                subject: document.getElementById('q-form-subject').value,
+                topic: document.getElementById('q-form-topic').value.trim(),
+                statement: document.getElementById('q-form-statement').value.trim(),
+                options: {
+                    A: document.getElementById('q-form-opt-A').value.trim(),
+                    B: document.getElementById('q-form-opt-B').value.trim(),
+                    C: document.getElementById('q-form-opt-C').value.trim(),
+                    D: document.getElementById('q-form-opt-D').value.trim(),
+                    E: document.getElementById('q-form-opt-E').value.trim()
+                },
+                correct: document.getElementById('q-form-correct').value,
+                explanation: document.getElementById('q-form-explanation').value.trim(),
+                status: 'unanswered',
+                selectedOption: null,
+                attempts: 0
+            };
+
+            appData.questions.unshift(newQuestion);
+            closeQuestionModal();
+            saveState();
+            showToast('Questão cadastrada no banco com sucesso!', 'success');
+        }
+
+        function deleteQuestion(qId) {
+            showConfirmModal(
+                'Excluir Questão',
+                'Deseja realmente remover esta questão do seu banco de estudos?',
+                () => {
+                    appData.questions = appData.questions.filter(q => q.id !== qId);
+                    saveState();
+                    showToast('Questão removida.', 'info');
+                }
+            );
+        }
+
+        function createFlashcardFromQuestion(qId) {
+            const q = appData.questions.find(item => item.id === qId);
+            if (!q) return;
+
+            openFlashcardModal();
+            document.getElementById('fc-form-subject').value = q.subject;
+            document.getElementById('fc-form-topic').value = q.topic;
+            document.getElementById('fc-form-front').value = `(${q.topic}) Qual a regra para: ${q.options[q.correct]}?`;
+            document.getElementById('fc-form-back').value = q.explanation;
+        }
+
+        /* ==========================================================================
+           8. FLASHCARDS COM REPETIÇÃO ESPAÇADA E SUPORTE A LACUNAS [CLOZE]
+           ========================================================================== */
+        function formatClozeText(text, revealAll = false) {
+            const safe = escapeHtml(text).replace(/\n/g, '<br>');
+            return safe.replace(/\[([^\]]+)\]/g, (match, inner) => {
+                if (revealAll) {
+                    return `<span class="cloze-revealed">${inner}</span>`;
+                }
+                return `<span onclick="event.stopPropagation(); this.classList.toggle('cloze-hidden'); this.classList.toggle('cloze-revealed')" class="cloze-hidden" title="Clique para revelar a lacuna">${inner}</span>`;
+            });
+        }
+
+        function setFlashcardMode(mode) {
+            flashcardMode = mode;
+            const revBtn = document.getElementById('btn-fc-mode-review');
+            const brwBtn = document.getElementById('btn-fc-mode-browse');
+            const revView = document.getElementById('fc-review-view');
+            const brwView = document.getElementById('fc-browse-view');
+
+            if (mode === 'review') {
+                revView.classList.remove('hidden');
+                brwView.classList.add('hidden');
+                revBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2';
+                brwBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition flex items-center gap-2';
+                renderFlashcardReview();
+            } else {
+                revView.classList.add('hidden');
+                brwView.classList.remove('hidden');
+                brwBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 text-white transition flex items-center gap-2';
+                revBtn.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition flex items-center gap-2';
+                renderFlashcardBrowser();
+            }
+        }
+
+        function renderFlashcardReview() {
+            const container = document.getElementById('fc-review-view');
+            const now = Date.now();
+            const dueList = appData.flashcards.filter(c => c.dueDate <= now);
+
+            if (dueList.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center space-y-4">
+                        <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto text-3xl">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Meta de Revisão Diária Concluída!</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                            Você revisou todos os cartões agendados para hoje. Quer adiantar a revisão de todos os cartões do baralho?
+                        </p>
+                        <div class="flex justify-center gap-3 pt-2">
+                            <button onclick="resetAllFlashcardsDue()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                                Revisar Todos Mesmo Assim
+                            </button>
+                            <button onclick="openFlashcardModal()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white transition">
+                                + Criar Novo Cartão
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentReviewCardIndex >= dueList.length) {
+                currentReviewCardIndex = 0;
+            }
+
+            const card = dueList[currentReviewCardIndex];
+            const subj = SUBJECTS[card.subject] || SUBJECTS.especificos;
+
+            container.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-lg space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-md border ${subj.badgeClass}">
+                                ${subj.shortName}
+                            </span>
+                            <span class="text-xs font-semibold text-slate-400">• ${escapeHtml(card.topic)}</span>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-rose-500">
+                            Restam ${dueList.length} hoje
+                        </span>
+                    </div>
+
+                    <!-- Frente do Cartão -->
+                    <div class="py-6 min-h-[140px] flex flex-col justify-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Frente do Cartão (clique nas lacunas ou vire):</span>
+                        <div class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white leading-relaxed">
+                            ${formatClozeText(card.front, isCardBackVisible)}
+                        </div>
+                    </div>
+
+                    <!-- Verso do Cartão -->
+                    ${isCardBackVisible ? `
+                        <div class="pt-6 border-t border-dashed border-slate-200 dark:border-slate-800 animate-fadeIn">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-500 mb-2 block">Resposta / Lei Seca:</span>
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line">
+                                ${escapeHtml(card.back)}
+                            </div>
+                        </div>
+
+                        <!-- 4 Botões de Repetição Espaçada (Estilo Anki) -->
+                        <div class="pt-4">
+                            <span class="block text-center text-[11px] font-bold uppercase text-slate-400 mb-3">Como foi sua lembrança em menos de 10 segundos?</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                <button onclick="gradeFlashcard('${card.id}', 'again')" class="py-3 px-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 font-bold text-xs flex flex-col items-center gap-1 transition">
+                                    <span>Errei</span>
+                                    <span class="text-[10px] font-mono opacity-75">+1 min (Hoje)</span>
+                                </button>
+                                <button onclick="gradeFlashcard('${card.id}', 'hard')" class="py-3 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-bold text-xs flex flex-col items-center gap-1 transition">
+                                    <span>Difícil</span>
+                                    <span class="text-[10px] font-mono opacity-75">+1 dia</span>
+                                </button>
+                                <button onclick="gradeFlashcard('${card.id}', 'good')" class="py-3 px-3 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-600 dark:text-sky-400 font-bold text-xs flex flex-col items-center gap-1 transition">
+                                    <span>Bom</span>
+                                    <span class="text-[10px] font-mono opacity-75">+4 dias</span>
+                                </button>
+                                <button onclick="gradeFlashcard('${card.id}', 'easy')" class="py-3 px-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold text-xs flex flex-col items-center gap-1 transition">
+                                    <span>Fácil</span>
+                                    <span class="text-[10px] font-mono opacity-75">+10 dias</span>
+                                </button>
+                            </div>
+                        </div>
+                    ` : `
+                        <button onclick="revealCardBack()" class="w-full py-3.5 rounded-2xl font-bold text-sm bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-600/20 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>Mostrar Resposta</span>
+                        </button>
+                    `}
+                </div>
+            `;
+        }
+
+        function revealCardBack() {
+            isCardBackVisible = true;
+            renderFlashcardReview();
+        }
+
+        function gradeFlashcard(cardId, grade) {
+            const card = appData.flashcards.find(c => c.id === cardId);
+            if (!card) return;
+
+            const now = Date.now();
+            const DAY_MS = 24 * 60 * 60 * 1000;
+
+            if (grade === 'again') {
+                card.dueDate = now + 60 * 1000; // Rever hoje (+1 min)
+                card.interval = 0;
+                showToast('Cartão mantido na fila de hoje (+1 min).', 'warning');
+            } else if (grade === 'hard') {
+                card.dueDate = now + 1 * DAY_MS;
+                card.interval = 1;
+                showToast('Agendado para amanhã (+1 dia).', 'info');
+            } else if (grade === 'good') {
+                card.dueDate = now + 4 * DAY_MS;
+                card.interval = 4;
+                showToast('Boa! Agendado para daqui a 4 dias.', 'success');
+            } else if (grade === 'easy') {
+                card.dueDate = now + 10 * DAY_MS;
+                card.interval = 10;
+                showToast('Excelente! Agendado para daqui a 10 dias.', 'success');
+            }
+
+            isCardBackVisible = false;
+            saveState();
+        }
+
+        function resetAllFlashcardsDue() {
+            const now = Date.now() - 1000;
+            appData.flashcards.forEach(c => c.dueDate = now);
+            isCardBackVisible = false;
+            saveState();
+            showToast('Todos os cartões foram colocados na fila de revisão de hoje!', 'info');
+        }
+
+        function renderFlashcardBrowser() {
+            const grid = document.getElementById('fc-browser-grid');
+            const subjFilter = document.getElementById('filter-fc-subject').value;
+            const search = document.getElementById('filter-fc-search').value.trim().toLowerCase();
+
+            const filtered = appData.flashcards.filter(c => {
+                if (subjFilter !== 'all' && c.subject !== subjFilter) return false;
+                if (search) {
+                    const hay = `${c.topic} ${c.front} ${c.back}`.toLowerCase();
+                    if (!hay.includes(search)) return false;
+                }
+                return true;
+            });
+
+            grid.innerHTML = '';
+            filtered.forEach(card => {
+                const subj = SUBJECTS[card.subject] || SUBJECTS.especificos;
+                const isDue = card.dueDate <= Date.now();
+                const el = document.createElement('div');
+                el.className = 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-3';
+                el.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="px-2 py-0.5 text-[11px] font-bold rounded border ${subj.badgeClass}">${subj.shortName}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-mono ${isDue ? 'text-rose-500 font-bold' : 'text-emerald-500'}">
+                                    ${isDue ? 'Revisar Hoje' : `Intervalo: ${card.interval || 1}d`}
+                                </span>
+                                <button onclick="deleteFlashcard('${card.id}')" class="text-slate-400 hover:text-rose-500">
+                                    <i class="fa-regular fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs font-bold text-slate-400">${escapeHtml(card.topic)}</p>
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white">${formatClozeText(card.front, true)}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl whitespace-pre-line">${escapeHtml(card.back)}</p>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        function openFlashcardModal() {
+            document.getElementById('flashcard-form').reset();
+            const modal = document.getElementById('flashcard-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeFlashcardModal() {
+            const modal = document.getElementById('flashcard-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function wrapSelectionInCloze() {
+            const textarea = document.getElementById('fc-form-front');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            if (start === end) {
+                textarea.value = text + ' [termo oculto]';
+            } else {
+                const selected = text.substring(start, end);
+                textarea.value = text.substring(0, start) + `[${selected}]` + text.substring(end);
+            }
+            textarea.focus();
+        }
+
+        function saveFlashcardForm(e) {
+            e.preventDefault();
+            const newCard = {
+                id: 'fc_' + Date.now(),
+                subject: document.getElementById('fc-form-subject').value,
+                topic: document.getElementById('fc-form-topic').value.trim(),
+                front: document.getElementById('fc-form-front').value.trim(),
+                back: document.getElementById('fc-form-back').value.trim(),
+                dueDate: Date.now() - 1000,
+                interval: 0
+            };
+            appData.flashcards.unshift(newCard);
+            closeFlashcardModal();
+            saveState();
+            showToast('Flashcard criado e adicionado à fila de hoje!', 'success');
+        }
+
+        function deleteFlashcard(cardId) {
+            showConfirmModal(
+                'Excluir Cartão',
+                'Deseja remover este cartão de lembrete permanentemente?',
+                () => {
+                    appData.flashcards = appData.flashcards.filter(c => c.id !== cardId);
+                    saveState();
+                    showToast('Cartão excluído.', 'info');
+                }
+            );
+        }
+
+        /* ==========================================================================
+           9. CICLO DE ESTUDOS (70/30) E CRONÔMETRO POMODORO COM WEB AUDIO API
+           ========================================================================== */
+        function renderCycle() {
+            const listEl = document.getElementById('cycle-blocks-list');
+            listEl.innerHTML = '';
+
+            const doneCount = appData.cycle.filter(b => b.done).length;
+            const totalCount = appData.cycle.length;
+            const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+
+            document.getElementById('cycle-progress-text').textContent = `${doneCount} / ${totalCount} blocos (${pct}%)`;
+            document.getElementById('cycle-progress-bar').style.width = `${pct}%`;
+
+            appData.cycle.forEach(block => {
+                const subj = SUBJECTS[block.subject] || SUBJECTS.especificos;
+                const item = document.createElement('label');
+                item.className = `flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer select-none transition ${
+                    block.done
+                        ? 'bg-emerald-500/5 border-emerald-500/30 opacity-70'
+                        : 'bg-slate-50/70 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 hover:border-sky-500/40'
+                }`;
+                item.innerHTML = `
+                    <input type="checkbox" ${block.done ? 'checked' : ''} onchange="toggleCycleBlock('${block.id}')" class="mt-1 w-4 h-4 rounded text-emerald-600 focus:ring-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5 mb-0.5">
+                            <span class="px-1.5 py-0.2 text-[10px] font-bold rounded border ${subj.badgeClass}">
+                                Peso ${subj.weight}
+                            </span>
+                            <span class="text-[11px] font-semibold text-slate-400">${subj.shortName}</span>
+                        </div>
+                        <p class="text-xs sm:text-sm font-semibold ${block.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-100'} truncate">
+                            ${escapeHtml(block.title)}
+                        </p>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        function toggleCycleBlock(blockId) {
+            const block = appData.cycle.find(b => b.id === blockId);
+            if (!block) return;
+            block.done = !block.done;
+            if (block.done) {
+                showToast(`Bloco concluído! Continue avançando no ciclo.`, 'success');
+            }
+            saveState();
+        }
+
+        function resetCycleCheckboxes() {
+            showConfirmModal(
+                'Iniciar Novo Giro do Ciclo',
+                'Deseja desmarcar todos os blocos para começar uma nova semana/giro de estudos?',
+                () => {
+                    appData.cycle.forEach(b => b.done = false);
+                    saveState();
+                    showToast('Novo giro do ciclo iniciado!', 'info');
+                }
+            );
+        }
+
+        // Funções do Timer Pomodoro
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timer-display').textContent =
+                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function setTimerPreset(minutes, mode) {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            timerInitialMinutes = minutes;
+            timerSeconds = minutes * 60;
+            timerMode = mode;
+
+            const badge = document.getElementById('timer-mode-badge');
+            const btn = document.getElementById('timer-start-btn');
+            if (mode === 'focus') {
+                badge.textContent = 'FOCO (ESTUDO)';
+                badge.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/10 text-sky-500 border border-sky-500/20';
+            } else {
+                badge.textContent = 'PAUSA DESCANSO';
+                badge.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20';
+            }
+            btn.innerHTML = `<i class="fa-solid fa-play"></i><span>Iniciar Bloco</span>`;
+            updateTimerDisplay();
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-start-btn');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.innerHTML = `<i class="fa-solid fa-play"></i><span>Retomar</span>`;
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-pause"></i><span>Pausar</span>`;
+                timerInterval = setInterval(() => {
+                    if (timerSeconds > 0) {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        playBeepSound();
+                        if (timerMode === 'focus') {
+                            appData.studyMinutes += timerInitialMinutes;
+                            saveState();
+                            showToast(`Bloco de ${timerInitialMinutes} min concluído e somado ao seu histórico!`, 'success');
+                        } else {
+                            showToast('Pausa encerrada! Hora de voltar para as questões.', 'info');
+                        }
+                        setTimerPreset(timerInitialMinutes, timerMode);
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            setTimerPreset(timerInitialMinutes, timerMode);
+        }
+
+        function completeTimerSessionManually() {
+            const elapsedMinutes = Math.max(1, Math.round((timerInitialMinutes * 60 - timerSeconds) / 60));
+            appData.studyMinutes += elapsedMinutes;
+            resetTimer();
+            saveState();
+            showToast(`+${elapsedMinutes} min registrados no seu histórico de estudos!`, 'success');
+        }
+
+        function playBeepSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {
+                // Ignorar caso o navegador bloqueie áudio automático
+            }
+        }
+
+        /* ==========================================================================
+           10. SINCRONIZAÇÃO FIREBASE REALTIME DATABASE REST & BACKUP JSON
+           ========================================================================== */
+        function openCloudModal() {
+            const modal = document.getElementById('cloud-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCloudModal() {
+            const modal = document.getElementById('cloud-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveCloudSettings() {
+            cloudConfig.url = document.getElementById('firebase-url-input').value.trim().replace(/\/+$/, '');
+            cloudConfig.secret = document.getElementById('firebase-secret-input').value.trim();
+            cloudConfig.autoSync = document.getElementById('firebase-autosync-check').checked;
+            localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(cloudConfig));
+            updateCloudIndicator();
+        }
+
+        function updateCloudIndicator() {
+            const badge = document.getElementById('cloud-badge');
+            const statusText = document.getElementById('cloud-last-sync');
+            if (cloudConfig.url) {
+                badge.className = 'w-2 h-2 rounded-full bg-emerald-300';
+                badge.title = 'Firebase configurado';
+                statusText.textContent = cloudConfig.lastSync
+                    ? `Última sincronização na nuvem: ${new Date(cloudConfig.lastSync).toLocaleString('pt-BR')}`
+                    : 'Firebase conectado. Clique em Enviar ou Baixar.';
+            } else {
+                badge.className = 'w-2 h-2 rounded-full bg-amber-300';
+                badge.title = 'Apenas LocalStorage ativo';
+                statusText.textContent = 'Status: Armazenamento Local (LocalStorage) ativo.';
+            }
+        }
+
+        function buildFirebaseEndpoint() {
+            saveCloudSettings();
+            if (!cloudConfig.url) {
+                showToast('Cole a URL do seu Firebase Realtime Database primeiro.', 'warning');
+                return null;
+            }
+            let endpoint = `${cloudConfig.url}/ufms_fapec_data.json`;
+            if (cloudConfig.secret) {
+                endpoint += `?auth=${encodeURIComponent(cloudConfig.secret)}`;
+            }
+            return endpoint;
+        }
+
+        async function pushToFirebase(silent = false) {
+            const endpoint = buildFirebaseEndpoint();
+            if (!endpoint) return;
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appData)
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                cloudConfig.lastSync = Date.now();
+                localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(cloudConfig));
+                updateCloudIndicator();
+                if (!silent) {
+                    showToast('Dados enviados e salvos na nuvem Firebase com sucesso!', 'success');
+                }
+            } catch (err) {
+                console.error(err);
+                if (!silent) {
+                    showToast('Falha ao enviar para o Firebase. Verifique a URL e as Regras (.read/.write: true).', 'error');
+                }
+            }
+        }
+
+        async function pullFromFirebase() {
+            const endpoint = buildFirebaseEndpoint();
+            if (!endpoint) return;
+
+            try {
+                const res = await fetch(endpoint);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const remoteData = await res.json();
+
+                if (!remoteData || !remoteData.questions) {
+                    showToast('Nenhum banco de dados encontrado nessa URL do Firebase ainda.', 'warning');
+                    return;
+                }
+
+                appData = {
+                    questions: remoteData.questions || [],
+                    flashcards: remoteData.flashcards || [],
+                    cycle: remoteData.cycle || INITIAL_CYCLE,
+                    studyMinutes: remoteData.studyMinutes || 0,
+                    updatedAt: remoteData.updatedAt || Date.now()
+                };
+                cloudConfig.lastSync = Date.now();
+                localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(cloudConfig));
+                saveState(false);
+                updateCloudIndicator();
+                showToast('Dados baixados da nuvem e atualizados com sucesso!', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Erro ao baixar dados do Firebase. Confira a URL informada.', 'error');
+            }
+        }
+
+        function exportBackupJSON() {
+            const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute('href', dataStr);
+            a.setAttribute('download', `backup_ufms_fapec_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast('Arquivo de backup .JSON exportado!', 'success');
+        }
+
+        function importBackupJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!imported.questions || !imported.flashcards) {
+                        throw new Error('Formato inválido');
+                    }
+                    appData = imported;
+                    saveState(false);
+                    showToast('Backup importado com sucesso!', 'success');
+                    closeCloudModal();
+                } catch (err) {
+                    showToast('Arquivo JSON inválido.', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        /* ==========================================================================
+           11. UTILITÁRIOS E INICIALIZAÇÃO
+           ========================================================================== */
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function refreshAllViews() {
+            renderDashboard();
+            renderQuestions();
+            if (flashcardMode === 'review') {
+                renderFlashcardReview();
+            } else {
+                renderFlashcardBrowser();
+            }
+            renderCycle();
+        }
+
+        window.onload = function () {
+            // Restaurar preferência de tema
+            const savedTheme = localStorage.getItem('ufms_theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-moon';
+            }
+
+            loadState();
+            updateCountdown();
+            setInterval(updateCountdown, 60000);
+            updateTimerDisplay();
+            refreshAllViews();
+        };
+    </script>
+</body>
+</html>
