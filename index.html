@@ -93,7 +93,7 @@
                         </span>
                     </div>
                     <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
-                        Analista em Educação • Gestão Pública (Campo Grande)
+                        UFMS 2026/2027 • Analista em Educação (Gestão Pública - Cód. 523)
                     </h1>
                 </div>
             </div>
@@ -121,23 +121,23 @@
 
         <!-- Navegação por Abas -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 flex overflow-x-auto border-t border-slate-100 dark:border-slate-800/60">
-            <button type="button" onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-sky-500 text-sky-600 dark:text-sky-400 whitespace-nowrap transition cursor-pointer">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Painel & Pesos</span>
-            </button>
-            <button type="button" onclick="switchTab('questions')" id="tab-btn-questions" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition cursor-pointer">
-                <i class="fa-solid fa-list-check"></i>
-                <span>Questões & Erros</span>
+            <button type="button" onclick="switchTab('questions')" id="tab-btn-questions" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-sky-500 text-sky-600 dark:text-sky-400 whitespace-nowrap transition cursor-pointer">
+                <i class="fa-solid fa-bullseye"></i>
+                <span>🎯 Treinar Questões</span>
                 <span id="nav-questions-badge" class="px-1.5 py-0.5 text-xs rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">20</span>
             </button>
             <button type="button" onclick="switchTab('flashcards')" id="tab-btn-flashcards" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition cursor-pointer">
                 <i class="fa-solid fa-layer-group"></i>
-                <span>Cartões de Lembrete</span>
+                <span>🗂️ Flashcards</span>
                 <span id="nav-due-badge" class="px-1.5 py-0.5 text-xs rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold">88</span>
+            </button>
+            <button type="button" onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition cursor-pointer">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>📊 Desempenho & Edital</span>
             </button>
             <button type="button" onclick="switchTab('cycle')" id="tab-btn-cycle" class="tab-btn flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap transition cursor-pointer">
                 <i class="fa-solid fa-stopwatch"></i>
-                <span>Ciclo & Pomodoro</span>
+                <span>⏱️ Ciclo & Cronômetro</span>
             </button>
         </div>
     </header>
@@ -145,8 +145,8 @@
     <!-- Conteúdo Principal -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-        <!-- ================= ABA 1: DASHBOARD (PAINEL GERAL) ================= -->
-        <section id="tab-dashboard" class="space-y-6">
+        <!-- ================= ABA 1: DASHBOARD (DESEMPENHO & EDITAL) ================= -->
+        <section id="tab-dashboard" class="hidden space-y-6">
             <div id="zero-alert-banner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start sm:items-center justify-between gap-4">
                 <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
@@ -254,84 +254,12 @@
                             80% dos pontos da prova estão concentrados em Conhecimentos Específicos, Legislação e Raciocínio Lógico.
                         </p>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
                             Total da Prova: <strong>60 questões = 100 pontos</strong>
                         </span>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50 dark:bg-slate-950/40">
-                                <th class="py-3.5 px-4">Disciplina</th>
-                                <th class="py-3.5 px-4 text-center">Questões na Prova</th>
-                                <th class="py-3.5 px-4 text-center">Peso</th>
-                                <th class="py-3.5 px-4 text-center">Máx. Pontos</th>
-                                <th class="py-3.5 px-4 text-center">Resolvidas (Acertos/Erros)</th>
-                                <th class="py-3.5 px-4">Aproveitamento</th>
-                                <th class="py-3.5 px-4 text-right">Pontos Projetados</th>
-                            </tr>
-                        </thead>
-                        <tbody id="edital-weights-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Cards de Estratégia -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-gradient-to-br from-sky-500/10 to-indigo-500/5 border border-sky-500/20 rounded-2xl p-5">
-                    <div class="flex items-center gap-2.5 text-sky-600 dark:text-sky-400 font-bold text-sm mb-2">
-                        <i class="fa-solid fa-rotate-left"></i>
-                        <span>1. Estudo Reverso FAPEC</span>
-                    </div>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        Comece cada bloco resolvendo questões da FAPEC (ou Vunesp/AOCP). Consulte a lei seca (Lei 14.133, Lei 8.112, Decreto 9.203) direto nos pontos em que errar ou hesitar.
-                    </p>
-                </div>
-                <div class="bg-gradient-to-br from-rose-500/10 to-orange-500/5 border border-rose-500/20 rounded-2xl p-5">
-                    <div class="flex items-center gap-2.5 text-rose-600 dark:text-rose-400 font-bold text-sm mb-2">
-                        <i class="fa-solid fa-clone"></i>
-                        <span>2. Cartões Diretos e Objetivos</span>
-                    </div>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        Navegue livremente pelos 88 cartões com os botões <strong>⬅️ Anterior</strong> e <strong>Próximo ➡️</strong> (ou setas do teclado) e marque com <strong>⭐ Para Revisar</strong> os conceitos que quiser filtrar depois.
-                    </p>
-                </div>
-                <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-5">
-                    <div class="flex items-center gap-2.5 text-emerald-600 dark:text-emerald-400 font-bold text-sm mb-2">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <span>3. Acesso de Qualquer Lugar</span>
-                    </div>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        Conecte sua URL gratuita do <strong>Firebase Realtime Database</strong> no botão "Sincronizar Nuvem" para estudar no PC e revisar seus cartões no celular pelo 4G.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= ABA 2: BANCO DE QUESTÕES E CADERNO DE ERROS ================= -->
-        <section id="tab-questions" class="hidden space-y-6">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-book-open-reader text-sky-500"></i>
-                            <span>Banco de Questões & Caderno de Erros</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Resolva questões no padrão FAPEC (A a E), veja o comentário e transforme seus erros em cartões de lembrete com 1 clique.
-                        </p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" onclick="openBatchQuestionModal()" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/20 flex items-center gap-2 transition cursor-pointer">
-                            <i class="fa-solid fa-file-import"></i>
-                            <span>📥 Importar em Lote (JSON)</span>
-                        </button>
-                        <button type="button" onclick="openQuestionModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white shadow-sm shadow-sky-600/20 flex items-center gap-2 transition cursor-pointer">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>+ Nova Questão</span>
+                        <button type="button" onclick="resetQuestionStats()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition cursor-pointer">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Zerar Estatísticas
                         </button>
                     </div>
                 </div>
@@ -369,6 +297,102 @@
             </div>
 
             <div id="questions-list" class="space-y-4"></div>
+        </section>
+
+        <!-- ================= ABA 2: TREINAR QUESTÕES & CADERNO DE ERROS ================= -->
+        <section id="tab-questions" class="space-y-5">
+            <!-- Cabeçalho de Ações e Modo de Visualização -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye text-sky-500"></i>
+                            <span>Treino de Questões FAPEC & Caderno de Erros</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            As alternativas sempre iniciam limpas para treino real. Marque uma opção para conferir em verde/vermelho e use <strong>⬅️ Voltar</strong>, <strong>📖 Ver Gabarito Comentado</strong> e <strong>Próximo ➡️</strong>.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="startQuestionTraining()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/25 flex items-center gap-2 transition cursor-pointer">
+                            <i class="fa-solid fa-play"></i>
+                            <span>🎯 Treinar com Questões</span>
+                        </button>
+                        <button type="button" onclick="resetTrainingSession()" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 flex items-center gap-2 transition cursor-pointer" title="Limpa todas as marcações da sessão atual">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>🔄 Resetar Sessão de Treino</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Barra Secundária: Modo Treino vs Lista Completa + Cadastro -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="setQuestionViewMode('train')" id="btn-q-mode-train" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-crosshairs"></i>
+                            <span>Modo Treino (1 por 1)</span>
+                        </button>
+                        <button type="button" onclick="setQuestionViewMode('list')" id="btn-q-mode-list" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Ver Lista Completa (<span id="q-total-badge">20</span>)</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" onclick="openBatchQuestionModal()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm flex items-center gap-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-file-import"></i>
+                            <span>📥 Importar em Lote (JSON)</span>
+                        </button>
+                        <button type="button" onclick="openQuestionModal()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm flex items-center gap-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>+ Nova Questão</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros de Treino -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 items-end">
+                    <div class="lg:col-span-4">
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Disciplina</label>
+                        <select id="filter-q-subject" onchange="onQuestionFilterChange()" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todas as Disciplinas</option>
+                            <option value="especificos">Conhecimentos Específicos (Peso 2)</option>
+                            <option value="legislacao">Legislação (Peso 2)</option>
+                            <option value="raciocinio">Raciocínio Lógico (Peso 2)</option>
+                            <option value="portugues">Língua Portuguesa (Peso 1)</option>
+                            <option value="ingles">Língua Inglesa (Peso 1)</option>
+                        </select>
+                    </div>
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Filtro de Questões</label>
+                        <select id="filter-q-status" onchange="onQuestionFilterChange()" class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="all">Todas as Questões</option>
+                            <option value="wrong">❌ Somente Caderno de Erros</option>
+                            <option value="never_answered">🆕 Nunca Resolvidas</option>
+                            <option value="correct">✅ Já Acertadas</option>
+                        </select>
+                    </div>
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Buscar Assunto / Palavra</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="filter-q-search" oninput="onQuestionFilterChange()" placeholder="Ex: Conselho Diretor, 8.112..." class="w-full pl-8 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-sky-500">
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <button type="button" onclick="shuffleQuestionsDeck()" class="w-full py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer" title="Embaralhar ordem das questões">
+                            <i class="fa-solid fa-shuffle text-sky-500"></i>
+                            <span>🔀 Embaralhar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visão 1: Treino 1 por 1 (Padrão) -->
+            <div id="question-trainer-view" class="max-w-4xl mx-auto"></div>
+
+            <!-- Visão 2: Lista Completa (Gerenciamento) -->
+            <div id="questions-list" class="hidden space-y-4"></div>
         </section>
 
         <!-- ================= ABA 3: CARTÕES DE LEMBRETE (NAVEGAÇÃO LIVRE) ================= -->
@@ -1323,11 +1347,12 @@
         let cloudConfig = {
             url: '',
             secret: '',
-            autoSync: false,
-            lastSync: null
-        };
+        let currentTab = 'questions';
+        let questionViewMode = 'train';
+        let currentQuestionIndex = 0;
+        let trainingSessionAnswers = {}; // Armazena marcações SOMENTE da sessão ativa (nunca trava entre sessões!)
+        let trainingSessionCommentOpen = {}; // Controla abertura do gabarito comentado por questão na sessão
 
-        let currentTab = 'dashboard';
         let flashcardMode = 'review';
         let currentReviewCardIndex = 0;
         let isCardBackVisible = false;
@@ -1665,7 +1690,7 @@
 
             Object.values(SUBJECTS).forEach(subj => {
                 const subjQuestions = appData.questions.filter(q => q.subject === subj.id);
-                const answered = subjQuestions.filter(q => q.status === 'correct' || q.status === 'wrong');
+                const answered = subjQuestions.filter(q => (q.totalAttempts || q.attempts || 0) > 0 || q.status === 'correct' || q.status === 'wrong');
                 const correct = subjQuestions.filter(q => q.status === 'correct').length;
                 const wrong = subjQuestions.filter(q => q.status === 'wrong').length;
 
@@ -1743,53 +1768,354 @@
             document.getElementById('kpi-study-hours').innerHTML = `Tempo líquido cronometrado: <strong class="text-slate-700 dark:text-slate-200">${hours}h ${String(mins).padStart(2, '0')}m</strong>`;
 
             document.getElementById('nav-questions-badge').textContent = appData.questions.length;
+            const qTotalBadge = document.getElementById('q-total-badge');
+            if (qTotalBadge) qTotalBadge.textContent = appData.questions.length;
             document.getElementById('nav-due-badge').textContent = totalCards;
             document.getElementById('fc-due-counter').textContent = totalCards;
             document.getElementById('fc-total-counter').textContent = totalCards;
         }
 
         /* ==========================================================================
-           8. BANCO DE QUESTÕES E CADERNO DE ERROS
+           8. TREINO DE QUESTÕES (MODO LIMPO 1 POR 1) E CADERNO DE ERROS
            ========================================================================== */
-        function renderQuestions() {
-            const listEl = document.getElementById('questions-list');
-            if (!listEl) return;
+        function getFilteredQuestions() {
+            const subjEl = document.getElementById('filter-q-subject');
+            const statusEl = document.getElementById('filter-q-status');
+            const searchEl = document.getElementById('filter-q-search');
 
-            const subjFilter = document.getElementById('filter-q-subject').value;
-            const statusFilter = document.getElementById('filter-q-status').value;
-            const searchFilter = document.getElementById('filter-q-search').value.trim().toLowerCase();
+            const subjFilter = subjEl ? subjEl.value : 'all';
+            const statusFilter = statusEl ? statusEl.value : 'all';
+            const searchFilter = searchEl ? searchEl.value.trim().toLowerCase() : '';
 
-            const filtered = appData.questions.filter(q => {
+            return appData.questions.filter(q => {
                 if (subjFilter !== 'all' && q.subject !== subjFilter) return false;
-                if (statusFilter !== 'all' && q.status !== statusFilter) return false;
+                if (statusFilter === 'wrong' && !q.everWrong && q.status !== 'wrong') return false;
+                if (statusFilter === 'correct' && q.status !== 'correct') return false;
+                if (statusFilter === 'never_answered' && ((q.attempts || 0) > 0 || q.status !== 'unanswered')) return false;
                 if (searchFilter) {
                     const haystack = `${q.topic} ${q.statement} ${q.explanation}`.toLowerCase();
                     if (!haystack.includes(searchFilter)) return false;
                 }
                 return true;
             });
+        }
+
+        function onQuestionFilterChange() {
+            currentQuestionIndex = 0;
+            renderQuestions();
+        }
+
+        function setQuestionViewMode(mode) {
+            questionViewMode = mode;
+            const trainBtn = document.getElementById('btn-q-mode-train');
+            const listBtn = document.getElementById('btn-q-mode-list');
+            const trainerEl = document.getElementById('question-trainer-view');
+            const listEl = document.getElementById('questions-list');
+
+            if (mode === 'train') {
+                if (trainerEl) trainerEl.classList.remove('hidden');
+                if (listEl) listEl.classList.add('hidden');
+                if (trainBtn) trainBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white transition flex items-center gap-1.5 cursor-pointer';
+                if (listBtn) listBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-1.5 cursor-pointer';
+                renderQuestionTrainer();
+            } else {
+                if (trainerEl) trainerEl.classList.add('hidden');
+                if (listEl) listEl.classList.remove('hidden');
+                if (listBtn) listBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white transition flex items-center gap-1.5 cursor-pointer';
+                if (trainBtn) trainBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-1.5 cursor-pointer';
+                renderQuestionsList();
+            }
+        }
+
+        function startQuestionTraining() {
+            trainingSessionAnswers = {};
+            trainingSessionCommentOpen = {};
+            currentQuestionIndex = 0;
+            setQuestionViewMode('train');
+            showToast('🎯 Sessão de treino iniciada com todas as questões limpas!', 'success');
+        }
+
+        function resetTrainingSession() {
+            trainingSessionAnswers = {};
+            trainingSessionCommentOpen = {};
+            currentQuestionIndex = 0;
+            renderQuestions();
+            showToast('🔄 Sessão de treino limpa! Todas as alternativas estão desmarcadas novamente.', 'info');
+        }
+
+        function shuffleQuestionsDeck() {
+            for (let i = appData.questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temp = appData.questions[i];
+                appData.questions[i] = appData.questions[j];
+                appData.questions[j] = temp;
+            }
+            currentQuestionIndex = 0;
+            renderQuestions();
+            showToast('🔀 Ordem das questões embaralhada!', 'info');
+        }
+
+        function renderQuestions() {
+            if (questionViewMode === 'train') {
+                renderQuestionTrainer();
+            } else {
+                renderQuestionsList();
+            }
+        }
+
+        function renderQuestionTrainer() {
+            const container = document.getElementById('question-trainer-view');
+            if (!container) return;
+
+            const filtered = getFilteredQuestions();
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center space-y-3">
+                        <i class="fa-solid fa-filter-circle-xmark text-3xl text-slate-400"></i>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Nenhuma questão encontrada neste filtro</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Altere o filtro acima ou clique em "+ Nova Questão" para cadastrar.</p>
+                        <button type="button" onclick="resetQuestionFilters()" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white transition cursor-pointer">
+                            Mostrar Todas as Questões
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentQuestionIndex < 0) currentQuestionIndex = filtered.length - 1;
+            else if (currentQuestionIndex >= filtered.length) currentQuestionIndex = 0;
+
+            const q = filtered[currentQuestionIndex];
+            const subj = SUBJECTS[q.subject] || SUBJECTS.especificos;
+            const sessionChoice = trainingSessionAnswers[q.id] || null;
+            const isAnsweredNow = sessionChoice !== null;
+            const isCommentOpen = !!trainingSessionCommentOpen[q.id];
+
+            // Contadores da sessão atual
+            const sessionTotalAnswered = Object.keys(trainingSessionAnswers).length;
+            let sessionHits = 0;
+            Object.entries(trainingSessionAnswers).forEach(([qId, chosen]) => {
+                const found = appData.questions.find(item => item.id === qId);
+                if (found && found.correct === chosen) sessionHits++;
+            });
+
+            let historyBadge = '';
+            if (q.everWrong || q.status === 'wrong') {
+                historyBadge = `<span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20">❌ Já errou antes</span>`;
+            } else if (q.status === 'correct') {
+                historyBadge = `<span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">✅ Acertada no histórico</span>`;
+            }
+
+            let optionsHtml = '';
+            ['A', 'B', 'C', 'D', 'E'].forEach(letter => {
+                const optText = (q.options && q.options[letter]) || '';
+                let btnStyle = 'border-slate-200 dark:border-slate-800 hover:border-sky-500/60 bg-slate-50/70 dark:bg-slate-950/60 text-slate-800 dark:text-slate-100';
+                let letterStyle = 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+                let feedbackIcon = '';
+
+                if (isAnsweredNow) {
+                    if (letter === q.correct) {
+                        btnStyle = 'border-emerald-500 bg-emerald-500/15 text-emerald-950 dark:text-emerald-100 font-semibold ring-1 ring-emerald-500/40';
+                        letterStyle = 'bg-emerald-500 text-white';
+                        feedbackIcon = `<span class="text-xs font-bold text-emerald-500 shrink-0 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Correta</span>`;
+                    } else if (letter === sessionChoice && sessionChoice !== q.correct) {
+                        btnStyle = 'border-rose-500 bg-rose-500/15 text-rose-950 dark:text-rose-100 font-semibold ring-1 ring-rose-500/40';
+                        letterStyle = 'bg-rose-500 text-white';
+                        feedbackIcon = `<span class="text-xs font-bold text-rose-500 shrink-0 flex items-center gap-1"><i class="fa-solid fa-circle-xmark"></i> Sua escolha</span>`;
+                    } else {
+                        btnStyle = 'border-slate-200/70 dark:border-slate-800/70 bg-slate-50/30 dark:bg-slate-950/30 opacity-65';
+                    }
+                }
+
+                optionsHtml += `
+                    <button type="button" onclick="selectOption('${q.id}', '${letter}')" class="w-full text-left p-3.5 rounded-2xl border ${btnStyle} flex items-start gap-3 transition cursor-pointer">
+                        <span class="w-7 h-7 rounded-xl text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 ${letterStyle}">
+                            ${letter}
+                        </span>
+                        <span class="text-sm sm:text-base flex-1 leading-relaxed">${escapeHtml(optText)}</span>
+                        ${feedbackIcon}
+                    </button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-lg space-y-6">
+                    <!-- Topo da Questão -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-md border ${subj.badgeClass}">
+                                ${subj.shortName} (Peso ${subj.weight})
+                            </span>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                • ${escapeHtml(q.topic)}
+                            </span>
+                            ${historyBadge}
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            ${sessionTotalAnswered > 0 ? `
+                                <span class="px-2.5 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold">
+                                    Sessão: ${sessionHits}/${sessionTotalAnswered} acertos
+                                </span>
+                            ` : ''}
+                            <span class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono font-extrabold text-slate-700 dark:text-slate-200">
+                                Questão ${currentQuestionIndex + 1} de ${filtered.length}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Enunciado -->
+                    <div class="text-base sm:text-lg text-slate-900 dark:text-white leading-relaxed font-semibold">
+                        ${escapeHtml(q.statement)}
+                    </div>
+
+                    <!-- Alternativas A a E -->
+                    <div class="space-y-2.5">
+                        ${optionsHtml}
+                    </div>
+
+                    <!-- Botão rápido para limpar só esta questão se já marcou -->
+                    ${isAnsweredNow ? `
+                        <div class="flex justify-end">
+                            <button type="button" onclick="clearSingleQuestionSession('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-eraser"></i>
+                                <span>🧹 Limpar Resposta desta Questão</span>
+                            </button>
+                        </div>
+                    ` : ''}
+
+                    <!-- Caixa Expansível do Gabarito Comentado -->
+                    ${isCommentOpen ? `
+                        <div class="p-5 rounded-2xl bg-sky-500/10 border border-sky-500/25 space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <strong class="text-sm font-extrabold text-sky-600 dark:text-sky-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-gavel"></i>
+                                    <span>Gabarito Oficial: Alternativa ${q.correct}</span>
+                                </strong>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <button type="button" onclick="quickOneClickFlashcard('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm flex items-center gap-1.5 transition cursor-pointer">
+                                        <i class="fa-solid fa-bolt"></i>
+                                        <span>⚡ Salvar como Flashcard</span>
+                                    </button>
+                                    <button type="button" onclick="createFlashcardFromQuestion('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-rose-500/40 transition cursor-pointer">
+                                        Editar antes de salvar
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
+                                ${escapeHtml(q.explanation)}
+                            </p>
+                        </div>
+                    ` : ''}
+
+                    <!-- Barra Inferior: Voltar | Ver Gabarito Comentado | Próximo -->
+                    <div class="pt-5 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <button type="button" onclick="prevQuestion()" class="px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition flex items-center gap-2 shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>⬅️ Voltar</span>
+                        </button>
+
+                        <button type="button" onclick="toggleQuestionComment('${q.id}')" class="px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm ${
+                            isCommentOpen
+                                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                                : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20'
+                        } transition flex items-center gap-2 cursor-pointer">
+                            <i class="fa-solid ${isCommentOpen ? 'fa-eye-slash' : 'fa-book-open'}"></i>
+                            <span>${isCommentOpen ? 'Ocultar Gabarito Comentado' : '📖 Ver Gabarito Comentado'}</span>
+                        </button>
+
+                        <button type="button" onclick="nextQuestion()" class="px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm bg-sky-600 hover:bg-sky-500 text-white transition flex items-center gap-2 shadow-md shadow-sky-600/20 cursor-pointer">
+                            <span>Próximo ➡️</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function prevQuestion() {
+            const filtered = getFilteredQuestions();
+            if (filtered.length === 0) return;
+            currentQuestionIndex = (currentQuestionIndex - 1 + filtered.length) % filtered.length;
+            renderQuestionTrainer();
+        }
+
+        function nextQuestion() {
+            const filtered = getFilteredQuestions();
+            if (filtered.length === 0) return;
+            currentQuestionIndex = (currentQuestionIndex + 1) % filtered.length;
+            renderQuestionTrainer();
+        }
+
+        function toggleQuestionComment(questionId) {
+            trainingSessionCommentOpen[questionId] = !trainingSessionCommentOpen[questionId];
+            renderQuestionTrainer();
+        }
+
+        function clearSingleQuestionSession(questionId) {
+            delete trainingSessionAnswers[questionId];
+            delete trainingSessionCommentOpen[questionId];
+            renderQuestions();
+            showToast('🧹 Resposta limpa! Você pode marcar novamente.', 'info');
+        }
+
+        function resetQuestionFilters() {
+            const sEl = document.getElementById('filter-q-subject');
+            const stEl = document.getElementById('filter-q-status');
+            const qEl = document.getElementById('filter-q-search');
+            if (sEl) sEl.value = 'all';
+            if (stEl) stEl.value = 'all';
+            if (qEl) qEl.value = '';
+            currentQuestionIndex = 0;
+            renderQuestions();
+        }
+
+        function resetQuestionStats() {
+            showConfirmModal(
+                'Zerar Estatísticas de Questões',
+                'Deseja zerar o histórico de acertos, erros e o Caderno de Erros? As questões cadastradas não serão excluídas.',
+                () => {
+                    appData.questions.forEach(q => {
+                        q.status = 'unanswered';
+                        q.selectedOption = null;
+                        q.attempts = 0;
+                        q.everWrong = false;
+                    });
+                    trainingSessionAnswers = {};
+                    trainingSessionCommentOpen = {};
+                    saveState();
+                    showToast('Estatísticas zeradas com sucesso!', 'info');
+                }
+            );
+        }
+
+        function renderQuestionsList() {
+            const listEl = document.getElementById('questions-list');
+            if (!listEl) return;
+
+            const filtered = getFilteredQuestions();
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `
                     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center">
                         <i class="fa-solid fa-folder-open text-3xl text-slate-400 mb-2"></i>
                         <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Nenhuma questão encontrada para este filtro.</p>
-                        <p class="text-xs text-slate-400 mt-1">Altere os filtros acima ou clique em "+ Nova Questão" para cadastrar.</p>
                     </div>
                 `;
                 return;
             }
 
             listEl.innerHTML = '';
-            filtered.forEach(q => {
+            filtered.forEach((q, idx) => {
                 const subj = SUBJECTS[q.subject] || SUBJECTS.especificos;
-                const isAnswered = q.status === 'correct' || q.status === 'wrong';
+                const sessionChoice = trainingSessionAnswers[q.id] || null;
+                const isAnsweredNow = sessionChoice !== null;
 
-                let statusBadge = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Não Resolvida</span>`;
-                if (q.status === 'correct') {
-                    statusBadge = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-check mr-1"></i>Acertou</span>`;
-                } else if (q.status === 'wrong') {
+                let statusBadge = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Pronta p/ Treino</span>`;
+                if (q.everWrong || q.status === 'wrong') {
                     statusBadge = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400"><i class="fa-solid fa-xmark mr-1"></i>Caderno de Erros</span>`;
+                } else if (q.status === 'correct') {
+                    statusBadge = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-check mr-1"></i>Já Acertada</span>`;
                 }
 
                 let optionsHtml = '';
@@ -1798,12 +2124,12 @@
                     let btnStyle = 'border-slate-200 dark:border-slate-800 hover:border-sky-500/50 bg-slate-50/60 dark:bg-slate-950/50';
                     let letterStyle = 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
 
-                    if (isAnswered) {
+                    if (isAnsweredNow) {
                         if (letter === q.correct) {
-                            btnStyle = 'border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 font-semibold';
+                            btnStyle = 'border-emerald-500 bg-emerald-500/15 text-emerald-900 dark:text-emerald-200 font-semibold';
                             letterStyle = 'bg-emerald-500 text-white';
-                        } else if (letter === q.selectedOption && q.selectedOption !== q.correct) {
-                            btnStyle = 'border-rose-500 bg-rose-500/10 text-rose-900 dark:text-rose-200 line-through opacity-80';
+                        } else if (letter === sessionChoice && sessionChoice !== q.correct) {
+                            btnStyle = 'border-rose-500 bg-rose-500/15 text-rose-900 dark:text-rose-200 font-semibold';
                             letterStyle = 'bg-rose-500 text-white';
                         }
                     }
@@ -1823,6 +2149,7 @@
                 card.innerHTML = `
                     <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2 py-0.5 text-xs font-mono font-bold rounded bg-slate-100 dark:bg-slate-800 text-slate-500">#${idx + 1}</span>
                             <span class="px-2.5 py-0.5 text-xs font-bold rounded-md border ${subj.badgeClass}">
                                 ${subj.shortName} (Peso ${subj.weight})
                             </span>
@@ -1832,6 +2159,9 @@
                         </div>
                         <div class="flex items-center gap-2">
                             ${statusBadge}
+                            <button type="button" onclick="openQuestionInTrainer(${idx})" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition cursor-pointer" title="Abrir esta questão no Modo Treino">
+                                Treinar esta
+                            </button>
                             <button type="button" onclick="deleteQuestion('${q.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 transition cursor-pointer" title="Excluir questão">
                                 <i class="fa-regular fa-trash-can text-xs"></i>
                             </button>
@@ -1846,7 +2176,7 @@
                         ${optionsHtml}
                     </div>
 
-                    <div class="${isAnswered ? 'block' : 'hidden'} pt-3 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                    <div class="${isAnsweredNow ? 'block' : 'hidden'} pt-3 border-t border-slate-200 dark:border-slate-800 space-y-3">
                         <div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-4 text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
                             <strong class="text-sky-600 dark:text-sky-400 block mb-1">
                                 <i class="fa-solid fa-gavel mr-1"></i>Gabarito Oficial: Alternativa ${q.correct}
@@ -1854,17 +2184,11 @@
                             ${escapeHtml(q.explanation)}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <button type="button" onclick="createFlashcardFromQuestion('${q.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm flex items-center gap-2 transition cursor-pointer">
-                                    <i class="fa-solid fa-bolt"></i>
-                                    <span>⚡ Transformar em Cartão de Lembrete</span>
-                                </button>
-                                <button type="button" onclick="quickOneClickFlashcard('${q.id}')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition cursor-pointer">
-                                    + Salvar Cartão em 1-Clique
-                                </button>
-                            </div>
-                            <button type="button" onclick="resetQuestionStatus('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 cursor-pointer">
-                                Limpar Resposta para Refazer
+                            <button type="button" onclick="quickOneClickFlashcard('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition cursor-pointer">
+                                ⚡ Salvar como Flashcard
+                            </button>
+                            <button type="button" onclick="clearSingleQuestionSession('${q.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 cursor-pointer">
+                                🧹 Limpar Resposta
                             </button>
                         </div>
                     </div>
@@ -1873,17 +2197,27 @@
             });
         }
 
+        function openQuestionInTrainer(index) {
+            currentQuestionIndex = index;
+            setQuestionViewMode('train');
+        }
+
         function selectOption(questionId, chosenLetter) {
             const q = appData.questions.find(item => item.id === questionId);
             if (!q) return;
-            q.selectedOption = chosenLetter;
+
+            // Registra na sessão atual para colorir de verde/vermelho imediatamente
+            trainingSessionAnswers[questionId] = chosenLetter;
+
+            // Atualiza estatísticas permanentes no banco (sem travar a visualização futura)
             q.attempts = (q.attempts || 0) + 1;
             if (chosenLetter === q.correct) {
                 q.status = 'correct';
-                showToast('Boa! Resposta correta registrada nas estatísticas.', 'success');
+                showToast('✅ Resposta correta!', 'success');
             } else {
                 q.status = 'wrong';
-                showToast(`Incorreto (Gabarito: ${q.correct}). Questão adicionada ao Caderno de Erros!`, 'error');
+                q.everWrong = true;
+                showToast(`❌ Incorreto (Gabarito: ${q.correct}). Adicionada ao Caderno de Erros!`, 'error');
             }
             saveState();
         }
@@ -2931,7 +3265,18 @@
         window.closeBatchQuestionModal = closeBatchQuestionModal;
         window.importBatchQuestions = importBatchQuestions;
         window.selectOption = selectOption;
-        window.resetQuestionStatus = resetQuestionStatus;
+        window.startQuestionTraining = startQuestionTraining;
+        window.resetTrainingSession = resetTrainingSession;
+        window.setQuestionViewMode = setQuestionViewMode;
+        window.prevQuestion = prevQuestion;
+        window.nextQuestion = nextQuestion;
+        window.toggleQuestionComment = toggleQuestionComment;
+        window.clearSingleQuestionSession = clearSingleQuestionSession;
+        window.shuffleQuestionsDeck = shuffleQuestionsDeck;
+        window.onQuestionFilterChange = onQuestionFilterChange;
+        window.resetQuestionFilters = resetQuestionFilters;
+        window.resetQuestionStats = resetQuestionStats;
+        window.openQuestionInTrainer = openQuestionInTrainer;
         window.createFlashcardFromQuestion = createFlashcardFromQuestion;
         window.quickOneClickFlashcard = quickOneClickFlashcard;
         window.renderQuestions = renderQuestions;
@@ -2959,22 +3304,31 @@
             updateCountdown();
             setInterval(updateCountdown, 60000);
             updateTimerDisplay();
-            refreshAllViews();
+            switchTab('questions');
 
             window.addEventListener('keydown', function (e) {
-                if (currentTab !== 'flashcards' || flashcardMode !== 'review') return;
                 const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
                 if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
 
-                if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    prevCard();
-                } else if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    nextCard();
-                } else if (e.key === ' ' || e.code === 'Space') {
-                    e.preventDefault();
-                    toggleCardAnswer();
+                if (currentTab === 'flashcards' && flashcardMode === 'review') {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        prevCard();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        nextCard();
+                    } else if (e.key === ' ' || e.code === 'Space') {
+                        e.preventDefault();
+                        toggleCardAnswer();
+                    }
+                } else if (currentTab === 'questions' && questionViewMode === 'train') {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        prevQuestion();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        nextQuestion();
+                    }
                 }
             });
         };
